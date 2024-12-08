@@ -2,7 +2,6 @@ local M = {}
 
 ---@type TsAutotag.Config
 M.config = {
-	auto_rename = true,
 	-- <div|> node type on cursor |
 	-- one of the children must be of this type
 	cursor_node_types = {
@@ -13,11 +12,26 @@ M.config = {
 	identifier_node_types = {
 		"tag_name", -- html
 		"member_expression", -- jsx <Provider.Context>
-		"identifier", -- fallback <div>
+		"identifier", -- jsx <div>
+
+		"erroneous_end_tag_name", -- closing broken html for renaming
 	},
-	-- don't even try to close if line does not match this pattern
-	-- even if it matches this does not mean that it will close
-	line_must_match = [[<.*>$]],
+
+	disable_in_macro = true,
+
+	auto_close = {
+		enabled = true,
+		-- don't even try to close if line till cursor does not match this pattern
+		-- even if it matches this does not mean that it will close
+		till_cursor_line_match = [[<.*>$]],
+	},
+	auto_rename = {
+		enabled = true,
+		ending_node_types = {
+			"erroneous_end_tag",
+			"jsx_closing_element",
+		},
+	},
 }
 
 return M

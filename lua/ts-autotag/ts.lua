@@ -3,6 +3,26 @@ local M = {}
 ---@param node TSNode?
 ---@param type string[]
 ---@return TSNode?
+function M.find_first_parent(node, type)
+	if not node then
+		return
+	end
+
+	node = node:parent()
+	if not node then
+		return
+	end
+
+	if vim.list_contains(type, node:type()) then
+		return node
+	end
+
+	return M.find_first_parent(node, type)
+end
+
+---@param node TSNode?
+---@param type string[]
+---@return TSNode?
 function M.find_first_child(node, type)
 	if not node then
 		return
@@ -20,42 +40,33 @@ function M.find_first_child(node, type)
 	end
 end
 
----@param node TSNode
+---@param from TSNode
+---@param to TSNode
 ---@param bufnr integer
----@return string[]|nil
-function M.extract_node_contents(node, bufnr)
-	local range = { node:range(false) }
-	local indices = {
-		start_row = range[1],
-		start_column = range[2],
-		end_row = range[3],
-		end_column = range[4],
+function M.copy_buf_contents(from, to, bufnr)
+	local from_text = vim.treesitter.get_node_text(from, bufnr)
+
+	local to_range = { to:range(false) }
+
+	local to_indices = {
+		start_row = to_range[1],
+		start_col = to_range[2],
+		end_row = to_range[3],
+		end_col = to_range[4],
 	}
+	local to_len = to_indices.end_col - to_indices.start_col + 1
 
-	local lines = vim.api.nvim_buf_get_lines(bufnr, indices.start_row, indices.end_row + 1, true)
-
-	if #lines == 0 then
+	-- idk if this is even possible
+	if to_indices.start_row ~= to_indices.end_row then
+		print("[ts-autotag.nvim] multi row renames not supported")
 		return
 	end
 
-	if #lines == 1 then
-		return { lines[1]:sub(indices.start_column + 1, indices.end_column) }
-	end
+	local l = vim.api.nvim_buf_get_lines(bufnr, to_indices.start_row, to_indices.start_row + 1, true)[1]
 
-	---@type string[]
-	local contents = {}
+	local renamed = l:sub(1, to_indices.start_col) .. from_text .. l:sub(to_indices.start_col + to_len)
 
-	for i, v in ipairs(lines) do
-		if i == 1 then
-			table.insert(contents, v:sub(indices.start_column + 1))
-		elseif i == #lines then
-			table.insert(contents, v:sub(1, indices.end_column))
-		else
-			table.insert(contents, v)
-		end
-	end
-
-	return contents
+	vim.api.nvim_buf_set_lines(bufnr, to_indices.start_row, to_indices.end_row + 1, true, { renamed })
 end
 
 return M
