@@ -35,7 +35,6 @@ Default config
 
 ```lua
 {
-
 	opening_node_types = {
 		-- templ
 		"tag_start",
@@ -65,6 +64,7 @@ Default config
 		enabled = true,
 		-- don't even try to close if line till cursor does not match this pattern
 		-- even if it matches this does not mean that it will close
+		-- you can think of $ being the cursor
 		till_cursor_line_match = [[<.*>$]],
 	},
 	auto_rename = {
