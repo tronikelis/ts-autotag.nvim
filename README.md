@@ -52,3 +52,8 @@ Default config
 	line_must_match = [[<.*>$]],
 }
 ```
+
+## 🤔 Differences between nvim-ts-autotag
+
+- A much more "dumb" and simple solution which just checks child node types under cursor
+- Does not override any keymaps, `nvim-ts-autotag` overrides `>` keymap which could break other plugins
