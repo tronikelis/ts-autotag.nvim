@@ -2,6 +2,16 @@
     ts-autotag.nvim
 </h1>
 
+<!--toc:start-->
+- [📃 Introduction](#📃-introduction)
+- [🖥️ Examples](#🖥️-examples)
+  - [Auto close tag](#auto-close-tag)
+  - [Auto rename tag](#auto-rename-tag)
+- [📦 Install](#📦-install)
+- [🔧 Configuration](#🔧-configuration)
+- [🤔 Differences between nvim-ts-autotag](#🤔-differences-between-nvim-ts-autotag)
+<!--toc:end-->
+
 ## 📃 Introduction
 
 A minimalist [Neovim](https://neovim.io/) plugin that auto closes & renames html/jsx elements without setting keymaps
