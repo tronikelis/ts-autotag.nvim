@@ -10,7 +10,7 @@ local M = {}
 
 ---@class TsAutotag.Config
 ---@field disable_in_macro boolean
----@field cursor_node_types string[]
+---@field opening_node_types string[]
 ---@field identifier_node_types string[]
 ---@field auto_rename TsAutotag.Config.AutoRename
 ---@field auto_close TsAutotag.Config.AutoClose?

@@ -18,7 +18,7 @@ function M.maybe_rename_tag(config, bufnr)
 	if not opening_node then
 		return
 	end
-	if not vim.list_contains(config.cursor_node_types, opening_node:type()) then
+	if not vim.list_contains(config.opening_node_types, opening_node:type()) then
 		return
 	end
 
@@ -27,7 +27,7 @@ function M.maybe_rename_tag(config, bufnr)
 		return
 	end
 
-	local closing_node = ts.find_nearest_sibling(opening_node, config.auto_rename.ending_node_types)
+	local closing_node = ts.find_first_or_last_sibling(opening_node, config.auto_rename.ending_node_types)
 	if not closing_node then
 		return
 	end

@@ -14,7 +14,7 @@ A minimalist [Neovim](https://neovim.io/) plugin that auto closes & renames html
 
 ### Auto rename tag
 
-*WIP*
+![auto rename tag](https://github.com/user-attachments/assets/f09eadf1-8440-45e6-b035-084fd97cc7a3)
 
 ## 📦 Install
 
@@ -24,6 +24,7 @@ With lazy.nvim
 {
     "tronikelis/ts-autotag.nvim",
     opts = {},
+    -- ft = {}, optionally you can load it only in jsx/html
     event = "VeryLazy",
 }
 ```
@@ -34,22 +35,52 @@ Default config
 
 ```lua
 {
-	auto_rename = true,
-	-- <div|> node type on cursor |
-	-- one of the children must be of this type
-	cursor_node_types = {
+
+	opening_node_types = {
+		-- templ
+		"tag_start",
+
+		-- html
 		"start_tag",
+
+		-- jsx
 		"jsx_opening_element",
 	},
-	-- extract identifier from these types
 	identifier_node_types = {
-		"tag_name", -- html
-		"member_expression", -- jsx <Provider.Context>
-		"identifier", -- fallback <div>
+		-- html
+		"tag_name",
+		"erroneous_end_tag_name",
+
+		-- jsx
+		"member_expression",
+		"identifier",
+
+		-- templ
+		"element_identifier",
 	},
-	-- don't even try to close if line does not match this pattern
-	-- even if it matches this does not mean that it will close
-	line_must_match = [[<.*>$]],
+
+	disable_in_macro = true,
+
+	auto_close = {
+		enabled = true,
+		-- don't even try to close if line till cursor does not match this pattern
+		-- even if it matches this does not mean that it will close
+		till_cursor_line_match = [[<.*>$]],
+	},
+	auto_rename = {
+		enabled = true,
+		ending_node_types = {
+			-- jsx
+			"jsx_closing_element",
+
+			-- html
+			"end_tag",
+			"erroneous_end_tag",
+
+			-- templ
+			"tag_end",
+		},
+	},
 }
 ```
 

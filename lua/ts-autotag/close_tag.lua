@@ -20,7 +20,7 @@ function M.maybe_close_tag(config, bufnr)
 	if not opening_node then
 		return
 	end
-	if not vim.list_contains(config.cursor_node_types, opening_node:type()) then
+	if not vim.list_contains(config.opening_node_types, opening_node:type()) then
 		return
 	end
 
