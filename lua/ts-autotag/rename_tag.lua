@@ -14,45 +14,30 @@ function M.maybe_rename_tag(config, bufnr)
 
 	parser:parse({ cursor[1] - 1, cursor[2] })
 
-	local node_left = vim.treesitter.get_node({ bufnr = bufnr })
-	vim.print({ node_left = node_left:type() })
-	if not node_left then
+	local opening_node = vim.treesitter.get_node({ bufnr = bufnr })
+	if not opening_node then
 		return
 	end
-	if not vim.list_contains(config.cursor_node_types, node_left:type()) then
-		return
-	end
-
-	local node_left_identifier = ts.find_first_child(node_left, config.identifier_node_types)
-	vim.print({ node_left_identifier = node_left_identifier:type() })
-	if not node_left_identifier then
+	if not vim.list_contains(config.cursor_node_types, opening_node:type()) then
 		return
 	end
 
-	local new_name = vim.treesitter.get_node_text(node_left_identifier, bufnr)
-
-	local node_left_parent = ts.find_first_parent(node_left, { "element", "jsx_element" })
-	if not node_left_parent then
+	local opening_node_id = ts.find_first_child(opening_node, config.identifier_node_types)
+	if not opening_node_id then
 		return
 	end
 
-	vim.print({ node_left_parent = node_left_parent:type() })
-
-	local ending_node = node_left_parent:child(node_left_parent:child_count() - 1)
-	vim.print({ ending_node = ending_node:type() })
-	if not ending_node then
-		return
-	end
-	if not vim.list_contains(config.auto_rename.ending_node_types, ending_node:type()) then
+	local closing_node = ts.find_nearest_sibling(opening_node, config.auto_rename.ending_node_types)
+	if not closing_node then
 		return
 	end
 
-	local ending_node_identifier = ts.find_first_child(ending_node, config.identifier_node_types)
-	if not ending_node_identifier then
+	local closing_node_id = ts.find_first_child(closing_node, config.identifier_node_types)
+	if not closing_node_id then
 		return
 	end
 
-	ts.copy_buf_contents(node_left_identifier, ending_node_identifier, bufnr)
+	ts.copy_buf_contents(opening_node_id, closing_node_id, bufnr)
 end
 
 ---@param config TsAutotag.Config

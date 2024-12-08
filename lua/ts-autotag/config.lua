@@ -28,8 +28,9 @@ M.config = {
 	auto_rename = {
 		enabled = true,
 		ending_node_types = {
-			"erroneous_end_tag",
 			"jsx_closing_element",
+			"end_tag",
+			"erroneous_end_tag",
 		},
 	},
 }

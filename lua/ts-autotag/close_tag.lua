@@ -16,24 +16,23 @@ function M.maybe_close_tag(config, bufnr)
 
 	parser:parse(node_pos)
 
-	local before_cursor = vim.treesitter.get_node({ bufnr = bufnr, pos = node_pos })
-	if not before_cursor then
+	local opening_node = vim.treesitter.get_node({ bufnr = bufnr, pos = node_pos })
+	if not opening_node then
+		return
+	end
+	if not vim.list_contains(config.cursor_node_types, opening_node:type()) then
 		return
 	end
 
-	if not vim.list_contains(config.cursor_node_types, before_cursor:type()) then
+	local opening_node_id = ts.find_first_child(opening_node, config.identifier_node_types)
+	local text = not opening_node_id and "" or vim.treesitter.get_node_text(opening_node_id, bufnr)
+	if not text then
 		return
 	end
 
-	local identifier = ts.find_first_child(before_cursor, config.identifier_node_types)
-	local tag = not identifier and "" or vim.treesitter.get_node_text(identifier, bufnr)
-	if not tag then
-		return
-	end
+	text = string.format("</%s>", text)
 
-	tag = string.format("</%s>", tag)
-
-	vim.api.nvim_put({ tag }, "", true, false)
+	vim.api.nvim_put({ text }, "", true, false)
 	vim.api.nvim_win_set_cursor(0, cursor)
 end
 
