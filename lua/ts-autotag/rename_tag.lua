@@ -41,9 +41,7 @@ function M.setup()
 				return
 			end
 
-			local bufnr = ev.buf
-
-			M.maybe_rename_tag(bufnr)
+			M.maybe_rename_tag(ev.buf)
 		end,
 	})
 end

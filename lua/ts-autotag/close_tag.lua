@@ -38,7 +38,10 @@ function M.setup()
 			return
 		end
 
-		M.maybe_close_tag(vim.api.nvim_get_current_buf())
+		local buf = vim.api.nvim_get_current_buf()
+		vim.schedule(function()
+			M.maybe_close_tag(buf)
+		end)
 	end)
 end
 
