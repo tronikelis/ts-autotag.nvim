@@ -15,7 +15,6 @@ M.config = {
 	identifier_node_types = {
 		-- html
 		"tag_name",
-		"erroneous_end_tag_name",
 
 		-- jsx
 		"member_expression",
@@ -42,7 +41,6 @@ M.config = {
 
 			-- html
 			"end_tag",
-			"erroneous_end_tag",
 
 			-- templ
 			"tag_end",

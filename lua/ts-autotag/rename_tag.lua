@@ -1,54 +1,56 @@
 local ts = require("ts-autotag.ts")
+local config = require("ts-autotag.config")
+local node = require("ts-autotag.node")
 
 local M = {}
 
 ---@param bufnr integer
----@param config TsAutotag.Config
-function M.maybe_rename_tag(config, bufnr)
-	local ok = pcall(vim.treesitter.get_parser, bufnr)
-	if not ok then
+---@param closing_node_iden TSNode
+function M.maybe_rename_tag(bufnr, closing_node_iden)
+	local opening_node_iden = node.get_node_iden(node.get_opening_node(bufnr))
+	if not opening_node_iden then
 		return
 	end
 
-	-- it seems that I get better results without parsing extra,
-	-- as parsing changes some nodes to have errors because invalid syntax
-	-- parser:parse({ cursor[1] - 1, cursor[1] - 1 })
-
-	local opening_node = vim.treesitter.get_node({ bufnr = bufnr })
-	if not opening_node then
-		return
-	end
-	if not vim.list_contains(config.opening_node_types, opening_node:type()) then
-		return
-	end
-
-	local opening_node_id = ts.find_first_child(opening_node, config.identifier_node_types)
-	if not opening_node_id then
-		return
-	end
-
-	local closing_node = ts.find_first_or_last_sibling(opening_node, config.auto_rename.ending_node_types)
-	if not closing_node then
-		return
-	end
-
-	local closing_node_id = ts.find_first_child(closing_node, config.identifier_node_types)
-	if not closing_node_id then
-		return
-	end
-
-	ts.copy_buf_contents(opening_node_id, closing_node_id, bufnr)
+	ts.copy_buf_contents(opening_node_iden, closing_node_iden, bufnr)
 end
 
----@param config TsAutotag.Config
-function M.setup(config)
-	vim.api.nvim_create_autocmd("InsertLeavePre", {
+function M.setup()
+	---@type TSNode?
+	local closing_node_iden = nil
+
+	vim.api.nvim_create_autocmd("CursorMoved", {
 		callback = function(ev)
-			if config.disable_in_macro and vim.fn.reg_recording() ~= "" then
+			closing_node_iden = nil
+
+			if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
 				return
 			end
 
-			M.maybe_rename_tag(config, ev.buf)
+			local bufnr = ev.buf
+
+			local ok = pcall(vim.treesitter.get_parser, bufnr)
+			if not ok then
+				return
+			end
+
+			closing_node_iden = node.get_node_iden(
+				ts.find_first_or_last_sibling(node.get_opening_node(bufnr), config.config.auto_rename.ending_node_types)
+			)
+		end,
+	})
+
+	vim.api.nvim_create_autocmd("InsertLeavePre", {
+		callback = function(ev)
+			if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
+				return
+			end
+
+			local bufnr = ev.buf
+
+			if closing_node_iden then
+				M.maybe_rename_tag(bufnr, closing_node_iden)
+			end
 		end,
 	})
 end
