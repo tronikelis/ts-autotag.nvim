@@ -24,8 +24,15 @@ function M.maybe_rename_tag(bufnr)
 		return
 	end
 
-	local closing_node_iden =
-		node.get_node_iden(ts.find_first_or_last_sibling(opening_node, config.config.auto_rename.closing_node_types))
+	local closing_node = ts.last_sibling(opening_node)
+	if not closing_node then
+		return
+	end
+	if not vim.list_contains(config.config.auto_rename.closing_node_types, closing_node:type()) then
+		return
+	end
+
+	local closing_node_iden = node.get_node_iden(closing_node)
 	if not closing_node_iden then
 		return
 	end

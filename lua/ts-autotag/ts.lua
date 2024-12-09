@@ -60,37 +60,12 @@ function M.last_sibling(node)
 		return
 	end
 
-	return parent:child(parent:child_count() - 1)
-end
-
--- finds the first or last sibling, else tries the same with parent
--- this seems to work pretty ok with jsx/html/templ
----@param node TSNode?
----@param type string[]
----@return TSNode?
-function M.find_first_or_last_sibling(node, type)
-	if not node then
+	local child_count = parent:child_count()
+	if child_count == 1 then -- there are no siblings
 		return
 	end
 
-	local parent = node:parent()
-	local sib = { node:next_sibling(), M.last_sibling(node) }
-	if not sib[1] and not sib[2] then
-		if not parent then
-			return
-		end
-
-		return M.find_first_or_last_sibling(parent, type)
-	end
-
-	if sib[1] and vim.list_contains(type, sib[1]:type()) then
-		return sib[1]
-	end
-	if sib[2] and vim.list_contains(type, sib[2]:type()) then
-		return sib[2]
-	end
-
-	return M.find_first_or_last_sibling(parent, type)
+	return parent:child(child_count - 1)
 end
 
 ---@param node TSNode?
