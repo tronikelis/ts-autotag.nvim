@@ -5,14 +5,14 @@ local M = {}
 ---@param bufnr integer
 ---@param config TsAutotag.Config
 function M.maybe_rename_tag(config, bufnr)
-	local cursor = vim.api.nvim_win_get_cursor(0)
-
-	local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
+	local ok = pcall(vim.treesitter.get_parser, bufnr)
 	if not ok then
 		return
 	end
 
-	parser:parse({ cursor[1] - 1, cursor[2] })
+	-- it seems that I get better results without parsing extra,
+	-- as parsing changes some nodes to have errors because invalid syntax
+	-- parser:parse({ cursor[1] - 1, cursor[1] - 1 })
 
 	local opening_node = vim.treesitter.get_node({ bufnr = bufnr })
 	if not opening_node then

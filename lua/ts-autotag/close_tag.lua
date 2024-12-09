@@ -6,17 +6,20 @@ local M = {}
 ---@param bufnr integer
 function M.maybe_close_tag(config, bufnr)
 	local cursor = vim.api.nvim_win_get_cursor(0)
-	-- get node at cursor position with col - 1, so we are inside the written tag
-	local node_pos = { cursor[1] - 1, cursor[2] - 1 }
 
 	local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
 	if not ok then
 		return
 	end
 
-	parser:parse(node_pos)
+	local cursor_row = cursor[1] - 1
+	parser:parse({ cursor_row, cursor_row })
 
-	local opening_node = vim.treesitter.get_node({ bufnr = bufnr, pos = node_pos })
+	local opening_node = vim.treesitter.get_node({
+		bufnr = bufnr,
+		-- get node at cursor position with col - 1, so we are inside the written tag
+		pos = { cursor[1] - 1, cursor[2] - 1 },
+	})
 	if not opening_node then
 		return
 	end
