@@ -7,7 +7,13 @@ local M = {}
 ---@return TSNode?
 function M.get_opening_node(opts)
 	local current = vim.treesitter.get_node(opts)
-	return ts.find_first_parent(current, config.config.opening_node_types)
+	if not current then
+		return
+	end
+
+	if vim.list_contains(config.config.opening_node_types, current:type()) then
+		return current
+	end
 end
 
 ---@param node TSNode?

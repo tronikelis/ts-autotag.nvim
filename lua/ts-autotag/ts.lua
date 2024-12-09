@@ -68,19 +68,4 @@ function M.last_sibling(node)
 	return parent:child(child_count - 1)
 end
 
----@param node TSNode?
----@param type string[]
----@return TSNode?
-function M.find_first_parent(node, type)
-	if not node then
-		return
-	end
-
-	if vim.list_contains(type, node:type()) then
-		return node
-	end
-
-	return M.find_first_parent(node:parent(), type)
-end
-
 return M
