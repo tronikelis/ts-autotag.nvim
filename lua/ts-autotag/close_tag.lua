@@ -1,10 +1,10 @@
-local ts = require("ts-autotag.ts")
+local config = require("ts-autotag.config")
+local node = require("ts-autotag.node")
 
 local M = {}
 
----@param config TsAutotag.Config
 ---@param bufnr integer
-function M.maybe_close_tag(config, bufnr)
+function M.maybe_close_tag(bufnr)
 	local cursor = vim.api.nvim_win_get_cursor(0)
 
 	local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
@@ -15,20 +15,14 @@ function M.maybe_close_tag(config, bufnr)
 	local cursor_row = cursor[1] - 1
 	parser:parse({ cursor_row, cursor_row })
 
-	local opening_node = vim.treesitter.get_node({
-		bufnr = bufnr,
-		-- get node at cursor position with col - 1, so we are inside the written tag
-		pos = { cursor[1] - 1, cursor[2] - 1 },
-	})
+	-- get node at cursor position with col - 1, so we are inside the written tag
+	local opening_node = node.get_opening_node({ bufnr = bufnr, pos = { cursor[1] - 1, cursor[2] - 1 } })
 	if not opening_node then
 		return
 	end
-	if not vim.list_contains(config.opening_node_types, opening_node:type()) then
-		return
-	end
 
-	local opening_node_id = ts.find_first_child(opening_node, config.identifier_node_types)
-	local text = not opening_node_id and "" or vim.treesitter.get_node_text(opening_node_id, bufnr)
+	local opening_node_iden = node.get_node_iden(opening_node)
+	local text = not opening_node_iden and "" or vim.treesitter.get_node_text(opening_node_iden, bufnr)
 	if not text then
 		return
 	end
@@ -39,13 +33,12 @@ function M.maybe_close_tag(config, bufnr)
 	vim.api.nvim_win_set_cursor(0, cursor)
 end
 
----@param config TsAutotag.Config
-function M.setup(config)
+function M.setup()
 	local prev_line = ""
 
 	vim.api.nvim_create_autocmd("TextChangedI", {
 		callback = function(ev)
-			if config.disable_in_macro and vim.fn.reg_recording() ~= "" then
+			if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
 				return
 			end
 
@@ -58,8 +51,8 @@ function M.setup(config)
 			local cursor = vim.api.nvim_win_get_cursor(0)
 			local till_cursor = line:sub(1, cursor[2])
 
-			if till_cursor:find(config.auto_close.till_cursor_line_match) then
-				M.maybe_close_tag(config, ev.buf)
+			if till_cursor:find(config.config.auto_close.till_cursor_line_match) then
+				M.maybe_close_tag(ev.buf)
 			end
 
 			prev_line = line

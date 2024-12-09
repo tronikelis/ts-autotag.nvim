@@ -36,7 +36,7 @@ M.config = {
 	},
 	auto_rename = {
 		enabled = true,
-		ending_node_types = {
+		closing_node_types = {
 			-- jsx
 			"jsx_closing_element",
 

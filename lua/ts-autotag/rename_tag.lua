@@ -1,54 +1,49 @@
 local ts = require("ts-autotag.ts")
+local config = require("ts-autotag.config")
+local node = require("ts-autotag.node")
 
 local M = {}
 
 ---@param bufnr integer
----@param config TsAutotag.Config
-function M.maybe_rename_tag(config, bufnr)
-	local ok = pcall(vim.treesitter.get_parser, bufnr)
+function M.maybe_rename_tag(bufnr)
+	local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
 	if not ok then
 		return
 	end
 
-	-- it seems that I get better results without parsing extra,
-	-- as parsing changes some nodes to have errors because invalid syntax
-	-- parser:parse({ cursor[1] - 1, cursor[1] - 1 })
+	local cursor_row = vim.api.nvim_win_get_cursor(0)[1] - 1
+	parser:parse({ cursor_row, cursor_row })
 
-	local opening_node = vim.treesitter.get_node({ bufnr = bufnr })
+	local opening_node = node.get_opening_node({ bufnr = bufnr })
 	if not opening_node then
 		return
 	end
-	if not vim.list_contains(config.opening_node_types, opening_node:type()) then
+
+	local opening_node_iden = node.get_node_iden(opening_node)
+	if not opening_node_iden then
 		return
 	end
 
-	local opening_node_id = ts.find_first_child(opening_node, config.identifier_node_types)
-	if not opening_node_id then
+	local closing_node_iden =
+		node.get_node_iden(ts.find_first_or_last_sibling(opening_node, config.config.auto_rename.closing_node_types))
+	if not closing_node_iden then
 		return
 	end
 
-	local closing_node = ts.find_first_or_last_sibling(opening_node, config.auto_rename.ending_node_types)
-	if not closing_node then
-		return
-	end
-
-	local closing_node_id = ts.find_first_child(closing_node, config.identifier_node_types)
-	if not closing_node_id then
-		return
-	end
-
-	ts.copy_buf_contents(opening_node_id, closing_node_id, bufnr)
+	ts.copy_buf_contents(opening_node_iden, closing_node_iden, bufnr)
 end
 
----@param config TsAutotag.Config
-function M.setup(config)
+function M.setup()
+	---@type TSNode?
 	vim.api.nvim_create_autocmd("InsertLeavePre", {
 		callback = function(ev)
-			if config.disable_in_macro and vim.fn.reg_recording() ~= "" then
+			if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
 				return
 			end
 
-			M.maybe_rename_tag(config, ev.buf)
+			local bufnr = ev.buf
+
+			M.maybe_rename_tag(bufnr)
 		end,
 	})
 end

@@ -17,18 +17,18 @@ local M = {}
 
 ---@class TsAutotag.Config.AutoRename
 ---@field enabled boolean
----@field ending_node_types string[]
+---@field closing_node_types string[]
 
 function M.setup(opts)
 	opts = opts or {}
 	config.config = vim.tbl_deep_extend("force", config.config, opts)
 
 	if config.config.auto_close.enabled then
-		close_tag.setup(config.config)
+		close_tag.setup()
 	end
 
 	if config.config.auto_rename.enabled then
-		rename_tag.setup(config.config)
+		rename_tag.setup()
 	end
 end
 

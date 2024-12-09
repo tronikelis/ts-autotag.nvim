@@ -64,8 +64,7 @@ function M.last_sibling(node)
 end
 
 -- finds the first or last sibling, else tries the same with parent
--- this seems to work pretty ok with jsx/html/templ, but this of course
--- depends on treesitter tree placing errored out tags correctly
+-- this seems to work pretty ok with jsx/html/templ
 ---@param node TSNode?
 ---@param type string[]
 ---@return TSNode?
@@ -92,6 +91,21 @@ function M.find_first_or_last_sibling(node, type)
 	end
 
 	return M.find_first_or_last_sibling(parent, type)
+end
+
+---@param node TSNode?
+---@param type string[]
+---@return TSNode?
+function M.find_first_parent(node, type)
+	if not node then
+		return
+	end
+
+	if vim.list_contains(type, node:type()) then
+		return node
+	end
+
+	return M.find_first_parent(node:parent(), type)
 end
 
 return M
