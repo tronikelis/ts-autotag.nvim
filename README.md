@@ -45,7 +45,6 @@ Default config
 
 ```lua
 {
-
 	opening_node_types = {
 		-- templ
 		"tag_start",
