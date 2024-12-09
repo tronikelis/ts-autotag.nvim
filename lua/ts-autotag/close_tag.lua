@@ -17,6 +17,9 @@ function M.maybe_close_tag(bufnr)
 
 	-- get node at cursor position with col - 1, so we are inside the written tag
 	local opening_node = node.get_opening_node({ bufnr = bufnr, pos = { cursor[1] - 1, cursor[2] - 1 } })
+	if not opening_node then
+		return
+	end
 
 	local opening_node_iden = node.get_node_iden(opening_node)
 	local text = not opening_node_iden and "" or vim.treesitter.get_node_text(opening_node_iden, bufnr)
