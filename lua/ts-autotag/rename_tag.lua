@@ -7,7 +7,7 @@ local M = {}
 ---@param bufnr integer
 ---@param closing_node_iden TSNode
 function M.maybe_rename_tag(bufnr, closing_node_iden)
-	local opening_node_iden = node.get_node_iden(node.get_opening_node(bufnr))
+	local opening_node_iden = node.get_node_iden(node.get_opening_node({ bufnr = bufnr }))
 	if not opening_node_iden then
 		return
 	end
@@ -35,7 +35,10 @@ function M.setup()
 			end
 
 			closing_node_iden = node.get_node_iden(
-				ts.find_first_or_last_sibling(node.get_opening_node(bufnr), config.config.auto_rename.ending_node_types)
+				ts.find_first_or_last_sibling(
+					node.get_opening_node({ bufnr = bufnr }),
+					config.config.auto_rename.ending_node_types
+				)
 			)
 		end,
 	})

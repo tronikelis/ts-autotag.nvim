@@ -3,11 +3,10 @@ local config = require("ts-autotag.config")
 
 local M = {}
 
----@param bufnr integer
----@param pos? integer[]
+---@param opts vim.treesitter.get_node.Opts
 ---@return TSNode?
-function M.get_opening_node(bufnr, pos)
-	local current = vim.treesitter.get_node({ bufnr = bufnr, pos = pos })
+function M.get_opening_node(opts)
+	local current = vim.treesitter.get_node(opts)
 	return ts.find_first_parent(current, config.config.opening_node_types)
 end
 
