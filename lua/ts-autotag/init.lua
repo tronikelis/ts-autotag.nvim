@@ -5,7 +5,6 @@ local config = require("ts-autotag.config")
 local M = {}
 
 ---@class TsAutotag.Config.AutoClose
----@field till_cursor_line_match string
 ---@field enabled boolean
 
 ---@class TsAutotag.Config

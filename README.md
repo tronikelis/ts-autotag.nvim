@@ -72,10 +72,6 @@ Default config
 
 	auto_close = {
 		enabled = true,
-		-- don't even try to close if line till cursor does not match this pattern
-		-- even if it matches this does not mean that it will close
-		-- you can think of $ being the cursor
-		till_cursor_line_match = [[<.*>$]],
 	},
 	auto_rename = {
 		enabled = true,

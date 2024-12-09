@@ -1,4 +1,3 @@
-local config = require("ts-autotag.config")
 local node = require("ts-autotag.node")
 
 local M = {}
@@ -34,30 +33,13 @@ function M.maybe_close_tag(bufnr)
 end
 
 function M.setup()
-	local prev_line = ""
+	vim.on_key(function(_, typed)
+		if typed ~= ">" or vim.api.nvim_get_mode().mode ~= "i" then
+			return
+		end
 
-	vim.api.nvim_create_autocmd("TextChangedI", {
-		callback = function(ev)
-			if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
-				return
-			end
-
-			local line = vim.api.nvim_get_current_line()
-			if #line - #prev_line ~= 1 then
-				prev_line = line
-				return
-			end
-
-			local cursor = vim.api.nvim_win_get_cursor(0)
-			local till_cursor = line:sub(1, cursor[2])
-
-			if till_cursor:find(config.config.auto_close.till_cursor_line_match) then
-				M.maybe_close_tag(ev.buf)
-			end
-
-			prev_line = line
-		end,
-	})
+		M.maybe_close_tag(vim.api.nvim_get_current_buf())
+	end)
 end
 
 return M
