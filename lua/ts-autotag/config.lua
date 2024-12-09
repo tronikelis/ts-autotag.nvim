@@ -15,6 +15,7 @@ M.config = {
 	identifier_node_types = {
 		-- html
 		"tag_name",
+		"erroneous_end_tag_name",
 
 		-- jsx
 		"member_expression",
@@ -35,12 +36,13 @@ M.config = {
 	},
 	auto_rename = {
 		enabled = true,
-		ending_node_types = {
+		closing_node_types = {
 			-- jsx
 			"jsx_closing_element",
 
 			-- html
 			"end_tag",
+			"erroneous_end_tag",
 
 			-- templ
 			"tag_end",

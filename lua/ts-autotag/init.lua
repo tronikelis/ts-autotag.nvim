@@ -17,7 +17,7 @@ local M = {}
 
 ---@class TsAutotag.Config.AutoRename
 ---@field enabled boolean
----@field ending_node_types string[]
+---@field closing_node_types string[]
 
 function M.setup(opts)
 	opts = opts or {}
