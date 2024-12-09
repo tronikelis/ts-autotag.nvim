@@ -64,8 +64,7 @@ function M.last_sibling(node)
 end
 
 -- finds the first or last sibling, else tries the same with parent
--- this seems to work pretty ok with jsx/html/templ, but this of course
--- depends on treesitter tree placing errored out tags correctly
+-- this seems to work pretty ok with jsx/html/templ
 ---@param node TSNode?
 ---@param type string[]
 ---@return TSNode?
