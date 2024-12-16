@@ -12,8 +12,8 @@ function M.get_opening_node(opts, depth)
 		return
 	end
 
-	return ts.find_parent(current, function(node)
-		return vim.list_contains(config.config.opening_node_types, node:type())
+	return ts.find_parent(current, function(n)
+		return vim.list_contains(config.config.opening_node_types, n:type())
 	end, depth)
 end
 
