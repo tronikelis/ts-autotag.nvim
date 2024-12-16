@@ -14,7 +14,7 @@ function M.maybe_rename_tag(bufnr)
 	local cursor_row = vim.api.nvim_win_get_cursor(0)[1] - 1
 	parser:parse({ cursor_row, cursor_row })
 
-	local opening_node = node.get_opening_node({ bufnr = bufnr })
+	local opening_node = node.get_opening_node({ bufnr = bufnr }, 1)
 	if not opening_node then
 		return
 	end

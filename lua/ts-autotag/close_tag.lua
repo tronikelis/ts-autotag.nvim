@@ -15,7 +15,7 @@ function M.maybe_close_tag(bufnr)
 	parser:parse({ cursor_row, cursor_row })
 
 	-- get node at cursor position with col - 1, so we are inside the written tag
-	local opening_node = node.get_opening_node({ bufnr = bufnr, pos = { cursor[1] - 1, cursor[2] - 1 } })
+	local opening_node = node.get_opening_node({ bufnr = bufnr, pos = { cursor[1] - 1, cursor[2] - 1 } }, 0)
 	if not opening_node then
 		return
 	end

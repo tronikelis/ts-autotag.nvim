@@ -1,19 +1,40 @@
 local M = {}
 
 ---@param node TSNode?
----@param type string[]
+---@param predicate fun(node: TSNode): boolean
+---@param depth integer
 ---@return TSNode?
-function M.find_first_child(node, type)
+function M.find_parent(node, predicate, depth)
 	if not node then
 		return
 	end
 
-	if vim.list_contains(type, node:type()) then
+	if predicate(node) then
+		return node
+	end
+
+	if depth == 0 then
+		return
+	end
+	depth = depth - 1
+
+	return M.find_parent(node:parent(), predicate, depth)
+end
+
+---@param node TSNode?
+---@param predicate fun(node: TSNode): boolean
+---@return TSNode?
+function M.find_first_child(node, predicate)
+	if not node then
+		return
+	end
+
+	if predicate(node) then
 		return node
 	end
 
 	for n in node:iter_children() do
-		local found = M.find_first_child(n, type)
+		local found = M.find_first_child(n, predicate)
 		if found then
 			return found
 		end
