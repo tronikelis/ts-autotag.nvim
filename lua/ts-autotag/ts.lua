@@ -5,8 +5,6 @@ local M = {}
 ---@param depth integer
 ---@return TSNode?
 function M.find_parent(node, predicate, depth)
-	depth = depth or 0
-
 	if not node then
 		return
 	end
