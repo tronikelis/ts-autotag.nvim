@@ -2,7 +2,7 @@ local M = {}
 
 ---@param node TSNode?
 ---@param predicate fun(node: TSNode): boolean
----@param depth integer?
+---@param depth integer
 ---@return TSNode?
 function M.find_parent(node, predicate, depth)
 	depth = depth or 0
