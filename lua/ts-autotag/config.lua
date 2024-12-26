@@ -6,6 +6,9 @@ M.config = {
 		-- templ
 		"tag_start",
 
+		-- xml,
+		"STag",
+
 		-- html
 		"start_tag",
 
@@ -16,6 +19,9 @@ M.config = {
 		-- html
 		"tag_name",
 		"erroneous_end_tag_name",
+
+		-- xml,
+		"Name",
 
 		-- jsx
 		"member_expression",
@@ -35,6 +41,9 @@ M.config = {
 		closing_node_types = {
 			-- jsx
 			"jsx_closing_element",
+
+			-- xml,
+			"Etag",
 
 			-- html
 			"end_tag",
