@@ -45,9 +45,13 @@ Default config
 
 ```lua
 {
+
 	opening_node_types = {
 		-- templ
 		"tag_start",
+
+		-- xml,
+		"STag",
 
 		-- html
 		"start_tag",
@@ -59,6 +63,9 @@ Default config
 		-- html
 		"tag_name",
 		"erroneous_end_tag_name",
+
+		-- xml,
+		"Name",
 
 		-- jsx
 		"member_expression",
@@ -78,6 +85,9 @@ Default config
 		closing_node_types = {
 			-- jsx
 			"jsx_closing_element",
+
+			-- xml,
+			"Etag",
 
 			-- html
 			"end_tag",
