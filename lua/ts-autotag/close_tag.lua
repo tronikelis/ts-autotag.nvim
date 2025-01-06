@@ -28,7 +28,7 @@ function M.maybe_close_tag(bufnr)
 
 	text = string.format("</%s>", text)
 
-	vim.api.nvim_put({ text }, "", true, false)
+	vim.api.nvim_put({ text }, "", false, false)
 	vim.api.nvim_win_set_cursor(0, cursor)
 end
 
