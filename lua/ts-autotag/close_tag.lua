@@ -1,4 +1,5 @@
 local node = require("ts-autotag.node")
+local config = require("ts-autotag.config")
 
 local M = {}
 
@@ -35,6 +36,9 @@ end
 function M.setup()
 	vim.on_key(function(_, typed)
 		if typed ~= ">" or vim.api.nvim_get_mode().mode ~= "i" then
+			return
+		end
+		if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
 			return
 		end
 
