@@ -21,7 +21,7 @@ function M.maybe_rename_closing_tag(bufnr)
 		if not opening_node then
 			return
 		end
-		if not vim.list_contains(config.config.auto_rename.closing_node_types, closing_node:type()) then
+		if not vim.list_contains(config.config.opening_node_types, opening_node:type()) then
 			return
 		end
 
