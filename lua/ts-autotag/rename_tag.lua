@@ -30,7 +30,7 @@ function M.maybe_rename_closing_tag(bufnr)
 end
 
 ---@param bufnr integer
-function M.maybe_rename_opening_tag(bufnr)
+function M.maybe_rename_opening_tag_or_closing(bufnr)
 	local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
 	if not ok or not parser then
 		return
@@ -40,6 +40,7 @@ function M.maybe_rename_opening_tag(bufnr)
 	parser:parse({ cursor_row, cursor_row }, function()
 		local opening_node = ts.get_opening_node({ bufnr = bufnr }, 1)
 		if not opening_node then
+			M.maybe_rename_closing_tag(bufnr)
 			return
 		end
 
@@ -87,8 +88,7 @@ function M.setup()
 				return
 			end
 
-			M.maybe_rename_opening_tag(ev.buf)
-			M.maybe_rename_closing_tag(ev.buf)
+			M.maybe_rename_opening_tag_or_closing(ev.buf)
 		end, 100),
 	})
 end
