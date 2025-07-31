@@ -87,9 +87,8 @@ function M.setup()
 				return
 			end
 
-			if not M.maybe_rename_opening_tag(ev.buf) then
-				M.maybe_rename_closing_tag(ev.buf)
-			end
+			M.maybe_rename_opening_tag(ev.buf)
+			M.maybe_rename_closing_tag(ev.buf)
 		end, 100),
 	})
 end
