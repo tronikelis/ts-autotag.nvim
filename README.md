@@ -3,20 +3,20 @@
 </h1>
 
 <!--toc:start-->
-- [📃 Introduction](#📃-introduction)
-- [🖥️ Examples](#🖥️-examples)
+- [Introduction](#-introduction)
+- [Examples](#-examples)
   - [Auto close tag](#auto-close-tag)
   - [Auto rename tag](#auto-rename-tag)
-- [📦 Install](#📦-install)
-- [🔧 Configuration](#🔧-configuration)
-- [🤔 Differences between nvim-ts-autotag](#🤔-differences-between-nvim-ts-autotag)
+- [Install](#-install)
+- [Configuration](#-configuration)
+- [Differences between nvim-ts-autotag](#-differences-between-nvim-ts-autotag)
 <!--toc:end-->
 
-## 📃 Introduction
+## Introduction
 
 A minimalist [Neovim](https://neovim.io/) plugin that auto closes & renames html/jsx elements without setting keymaps
 
-## 🖥️ Examples
+## Examples
 
 ### Auto close tag
 
@@ -26,7 +26,7 @@ A minimalist [Neovim](https://neovim.io/) plugin that auto closes & renames html
 
 ![auto rename tag](https://github.com/user-attachments/assets/f09eadf1-8440-45e6-b035-084fd97cc7a3)
 
-## 📦 Install
+## Install
 
 With lazy.nvim
 
@@ -39,7 +39,7 @@ With lazy.nvim
 }
 ```
 
-## 🔧 Configuration
+## Configuration
 
 Default config
 
@@ -100,7 +100,7 @@ Default config
 }
 ```
 
-## 🤔 Differences between nvim-ts-autotag
+## Differences between nvim-ts-autotag
 
 - A much more "dumb" and simple solution which just checks child node types under cursor
 - Does not override any keymaps, `nvim-ts-autotag` overrides `>` keymap which could break other plugins

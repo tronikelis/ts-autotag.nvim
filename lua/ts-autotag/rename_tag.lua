@@ -70,13 +70,14 @@ local function throttle(callback, ms)
 	return function(...)
 		local args = { ... }
 
-		if current_ms() - time > ms then
-			callback(unpack(args))
-			time = current_ms()
-		end
 		timer:start(ms, 0, function()
 			vim.schedule_wrap(callback)(unpack(args))
 		end)
+		if current_ms() - time > ms then
+			callback(unpack(args))
+			time = current_ms()
+			timer:stop()
+		end
 	end
 end
 
