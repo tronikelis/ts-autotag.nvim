@@ -4,7 +4,7 @@ local config = require("ts-autotag.config")
 local M = {}
 
 ---@param bufnr integer
-function M.maybe_close_tag(bufnr)
+local function maybe_close_tag(bufnr)
 	local cursor = vim.api.nvim_win_get_cursor(0)
 
 	local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
@@ -44,7 +44,7 @@ function M.setup()
 
 		local buf = vim.api.nvim_get_current_buf()
 		vim.schedule(function()
-			M.maybe_close_tag(buf)
+			maybe_close_tag(buf)
 		end)
 	end)
 end

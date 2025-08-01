@@ -43,7 +43,7 @@ M.config = {
 			"jsx_closing_element",
 
 			-- xml,
-			"Etag",
+			"ETag",
 
 			-- html
 			"end_tag",
