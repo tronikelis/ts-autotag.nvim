@@ -51,6 +51,15 @@ local function set_empty_indices(indices, offset)
 	indices.end_row = indices.start_row
 end
 
+---@param opts vim.api.keyset.set_extmark
+local function extmark_opts(opts)
+	return vim.tbl_extend("force", {
+		hl_group = "TsAutotagDebug",
+		right_gravity = false,
+		end_right_gravity = true,
+	}, opts)
+end
+
 ---@param bufnr integer
 local function update_sibling_extmarks(bufnr)
 	local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
@@ -87,38 +96,44 @@ local function update_sibling_extmarks(bufnr)
 		set_empty_indices(opening_indices, 2)
 	end
 
-	local id = vim.api.nvim_buf_set_extmark(bufnr, NS_EXT, opening_indices.start_row, opening_indices.start_col, {
-		hl_group = "TsAutotagDebug",
-		end_col = opening_indices.end_col,
-		end_row = opening_indices.end_row,
-		right_gravity = false,
-		end_right_gravity = true,
-	})
-	vim.api.nvim_buf_set_extmark(bufnr, NS_EXT, closing_indices.start_row, closing_indices.start_col, {
-		id = id + 1,
-		hl_group = "TsAutotagDebug",
-		end_col = closing_indices.end_col,
-		end_row = closing_indices.end_row,
-		right_gravity = false,
-		end_right_gravity = true,
-	})
+	local id = vim.api.nvim_buf_set_extmark(
+		bufnr,
+		NS_EXT,
+		opening_indices.start_row,
+		opening_indices.start_col,
+		extmark_opts({
+			end_col = opening_indices.end_col,
+			end_row = opening_indices.end_row,
+		})
+	)
+	vim.api.nvim_buf_set_extmark(
+		bufnr,
+		NS_EXT,
+		closing_indices.start_row,
+		closing_indices.start_col,
+		extmark_opts({
+			id = id + 1,
+			end_col = closing_indices.end_col,
+			end_row = closing_indices.end_row,
+		})
+	)
 end
 
 ---@param bufnr integer
 local function get_cursor_extmarks(bufnr)
 	local cursor = vim.api.nvim_win_get_cursor(0)
-	local ext1 = vim.api.nvim_buf_get_extmarks(
+	local ext = vim.api.nvim_buf_get_extmarks(
 		bufnr,
 		NS_EXT,
 		{ cursor[1] - 1, cursor[2] },
 		{ cursor[1] - 1, cursor[2] },
 		{ overlap = true, details = true, limit = 1 }
 	)
-	if not ext1[1] then
+	if not ext[1] then
 		return
 	end
 
-	return ext1[1]
+	return ext[1]
 end
 
 ---@param bufnr integer
@@ -139,15 +154,17 @@ local function sync_pair(bufnr, pair_id_offset)
 	local before, after = text1:match("(.-) (.*)")
 	if before and after then
 		text1 = before
-		local opts = assert(ext1[4])
-		vim.api.nvim_buf_set_extmark(bufnr, NS_EXT, ext1[2], ext1[3], {
-			id = ext1[1],
-			hl_group = "TsAutotagDebug",
-			end_col = opts.end_col - #after,
-			end_row = opts.end_row,
-			right_gravity = false,
-			end_right_gravity = true,
-		})
+		vim.api.nvim_buf_set_extmark(
+			bufnr,
+			NS_EXT,
+			ext1[2],
+			ext1[3],
+			extmark_opts({
+				id = ext1[1],
+				end_col = assert(ext1[4]).end_col - #after,
+				end_row = assert(ext1[4]).end_row,
+			})
+		)
 	end
 
 	local text2 = vim.api.nvim_buf_get_text(bufnr, ext2[1], ext2[2], ext2[3].end_row, ext2[3].end_col, {})[1]
@@ -156,6 +173,18 @@ local function sync_pair(bufnr, pair_id_offset)
 	end
 
 	vim.api.nvim_buf_set_text(bufnr, ext2[1], ext2[2], ext2[3].end_row, ext2[3].end_col, { text1 })
+
+	-- local cursor = vim.api.nvim_win_get_cursor(0)
+	-- vim.api.nvim_win_set_cursor(0, { cursor[1], cursor[2] - 2 })
+	-- update_sibling_extmarks(bufnr)
+	-- vim.api.nvim_win_set_cursor(0, cursor)
+end
+
+---@param bufnr integer
+local function sync(bufnr)
+	update_sibling_extmarks(bufnr)
+	sync_pair(bufnr, 1)
+	sync_pair(bufnr, -1)
 end
 
 function M.setup()
@@ -165,23 +194,28 @@ function M.setup()
 
 	vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
 		callback = function(ev)
-			local existing_ext = get_cursor_extmarks(ev.buf)
-			if existing_ext then
-				return
+			-- local existing_ext = get_cursor_extmarks(ev.buf)
+			-- if existing_ext then
+			-- 	return
+			-- end
+
+			local t = vim.uv.hrtime() / 1000 / 1000
+			sync(ev.buf)
+			local diff = (vim.uv.hrtime() / 1000 / 1000) - t
+			if diff > 5 then
+				print(diff)
 			end
 
-			update_sibling_extmarks(ev.buf)
-
-			local group = vim.api.nvim_create_augroup("ts-autotag.nvim/CursorMoved", {})
-
-			vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
-				group = group,
-				buffer = ev.buf,
-				callback = function(ev)
-					sync_pair(ev.buf, 1)
-					sync_pair(ev.buf, -1)
-				end,
-			})
+			-- local group = vim.api.nvim_create_augroup("ts-autotag.nvim/CursorMoved", {})
+			--
+			-- vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+			-- 	group = group,
+			-- 	buffer = ev.buf,
+			-- 	callback = function(ev)
+			-- 		sync_pair(ev.buf, 1)
+			-- 		sync_pair(ev.buf, -1)
+			-- 	end,
+			-- })
 		end,
 	})
 end
