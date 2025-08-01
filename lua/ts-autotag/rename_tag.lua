@@ -43,14 +43,6 @@ local function get_closing_pair(bufnr)
 	return closing_node, sibling
 end
 
----@param indices TsAutotag.NodeIndices
----@param offset integer
-local function set_empty_indices(indices, offset)
-	indices.start_col = indices.start_col + offset
-	indices.end_col = indices.start_col
-	indices.end_row = indices.start_row
-end
-
 ---@param opts vim.api.keyset.set_extmark
 local function extmark_opts(opts)
 	return vim.tbl_extend("force", {
@@ -78,25 +70,22 @@ local function update_sibling_extmarks(bufnr, on_parse)
 			on_parse()
 			return
 		end
-		vim.api.nvim_buf_clear_namespace(bufnr, NS_EXT, 0, -1)
-
-		local opening_indices = ts.get_node_indices(opening_node)
-		local closing_indices = ts.get_node_indices(closing_node)
 
 		local opening_node_iden = ts.get_node_iden(opening_node)
-		if opening_node_iden then
-			opening_indices = ts.get_node_indices(opening_node_iden)
-		else
-			set_empty_indices(opening_indices, 1)
+		if not opening_node_iden then
+			on_parse()
+			return
 		end
+		local opening_indices = ts.get_node_indices(opening_node_iden)
 
 		local closing_node_iden = ts.get_node_iden(closing_node)
-		if closing_node_iden then
-			closing_indices = ts.get_node_indices(closing_node_iden)
-		else
-			set_empty_indices(opening_indices, 2)
+		if not closing_node_iden then
+			on_parse()
+			return
 		end
+		local closing_indices = ts.get_node_indices(closing_node_iden)
 
+		vim.api.nvim_buf_clear_namespace(bufnr, NS_EXT, 0, -1)
 		local id = vim.api.nvim_buf_set_extmark(
 			bufnr,
 			NS_EXT,
