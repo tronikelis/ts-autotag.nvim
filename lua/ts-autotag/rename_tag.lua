@@ -88,7 +88,7 @@ local function update_sibling_extmarks(bufnr)
 	end
 
 	local id = vim.api.nvim_buf_set_extmark(bufnr, NS_EXT, opening_indices.start_row, opening_indices.start_col, {
-		hl_group = "Comment",
+		hl_group = "TsAutotagDebug",
 		end_col = opening_indices.end_col,
 		end_row = opening_indices.end_row,
 		right_gravity = false,
@@ -96,7 +96,7 @@ local function update_sibling_extmarks(bufnr)
 	})
 	vim.api.nvim_buf_set_extmark(bufnr, NS_EXT, closing_indices.start_row, closing_indices.start_col, {
 		id = id + 1,
-		hl_group = "Comment",
+		hl_group = "TsAutotagDebug",
 		end_col = closing_indices.end_col,
 		end_row = closing_indices.end_row,
 		right_gravity = false,
@@ -136,16 +136,17 @@ local function sync_pair(bufnr, pair_id_offset)
 	end
 
 	local text1 = vim.api.nvim_buf_get_text(bufnr, ext1[2], ext1[3], ext1[4].end_row, ext1[4].end_col, {})[1]
-	if text1:sub(-1) == " " then
-		text1 = text1:sub(1, -2)
+	local before, after = text1:match("(.-) (.*)")
+	if before and after then
+		text1 = before
 		local opts = assert(ext1[4])
 		vim.api.nvim_buf_set_extmark(bufnr, NS_EXT, ext1[2], ext1[3], {
 			id = ext1[1],
-			hl_group = "Comment",
-			end_col = opts.end_col,
+			hl_group = "TsAutotagDebug",
+			end_col = opts.end_col - #after,
 			end_row = opts.end_row,
 			right_gravity = false,
-			end_right_gravity = false,
+			end_right_gravity = true,
 		})
 	end
 
@@ -158,6 +159,10 @@ local function sync_pair(bufnr, pair_id_offset)
 end
 
 function M.setup()
+	vim.api.nvim_set_hl(0, "TsAutotagDebug", {
+		default = true,
+	})
+
 	vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
 		callback = function(ev)
 			local existing_ext = get_cursor_extmarks(ev.buf)
