@@ -130,4 +130,42 @@ function M.last_sibling(node)
 	return parent:child(child_count - 1)
 end
 
+---@param bufnr integer
+---@return TSNode?, TSNode?
+function M.get_opening_pair(bufnr)
+	local opening_node = M.get_opening_node({ bufnr = bufnr }, 1)
+	if not opening_node then
+		return
+	end
+
+	local sibling = M.last_sibling(opening_node)
+	if not sibling then
+		return
+	end
+	if not vim.list_contains(config.config.auto_rename.closing_node_types, sibling:type()) then
+		return
+	end
+
+	return opening_node, sibling
+end
+
+---@param bufnr integer
+---@return TSNode?, TSNode?
+function M.get_closing_pair(bufnr)
+	local closing_node = M.get_closing_node({ bufnr = bufnr }, 1)
+	if not closing_node then
+		return
+	end
+
+	local sibling = M.first_sibling(closing_node)
+	if not sibling then
+		return
+	end
+	if not vim.list_contains(config.config.opening_node_types, sibling:type()) then
+		return
+	end
+
+	return closing_node, sibling
+end
+
 return M

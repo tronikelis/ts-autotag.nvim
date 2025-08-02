@@ -1,5 +1,4 @@
 local ts = require("ts-autotag.ts")
-local config = require("ts-autotag.config")
 
 local M = {}
 
@@ -10,44 +9,6 @@ local NS_TAG = vim.api.nvim_create_namespace("ts-autotag.nvim/NS_TAG")
 local function clear_extmarks(bufnr)
 	vim.api.nvim_buf_clear_namespace(bufnr, NS_IDEN, 0, -1)
 	vim.api.nvim_buf_clear_namespace(bufnr, NS_TAG, 0, -1)
-end
-
----@param bufnr integer
----@return TSNode?, TSNode?
-local function get_opening_pair(bufnr)
-	local opening_node = ts.get_opening_node({ bufnr = bufnr }, 1)
-	if not opening_node then
-		return
-	end
-
-	local sibling = ts.last_sibling(opening_node)
-	if not sibling then
-		return
-	end
-	if not vim.list_contains(config.config.auto_rename.closing_node_types, sibling:type()) then
-		return
-	end
-
-	return opening_node, sibling
-end
-
----@param bufnr integer
----@return TSNode?, TSNode?
-local function get_closing_pair(bufnr)
-	local closing_node = ts.get_closing_node({ bufnr = bufnr }, 1)
-	if not closing_node then
-		return
-	end
-
-	local sibling = ts.first_sibling(closing_node)
-	if not sibling then
-		return
-	end
-	if not vim.list_contains(config.config.opening_node_types, sibling:type()) then
-		return
-	end
-
-	return closing_node, sibling
 end
 
 ---@param opts vim.api.keyset.set_extmark
@@ -93,9 +54,9 @@ local function update_sibling_extmarks(bufnr, on_parse)
 	local cursor_row = vim.api.nvim_win_get_cursor(0)[1] - 1
 
 	local function after_parse()
-		local opening_node, closing_node = get_opening_pair(bufnr)
+		local opening_node, closing_node = ts.get_opening_pair(bufnr)
 		if not opening_node or not closing_node then
-			closing_node, opening_node = get_closing_pair(bufnr)
+			closing_node, opening_node = ts.get_closing_pair(bufnr)
 		end
 		if not opening_node or not closing_node then
 			if on_parse then
