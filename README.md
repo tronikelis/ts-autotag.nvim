@@ -30,7 +30,10 @@ A minimalist [Neovim](https://neovim.io/) plugin that auto closes & renames html
 
 ```lua
 vim.keymap.set("n", "<leader>rn", function()
-	require("ts-autotag").rename()
+	-- it returns success status, thus you can fallback like so
+	if not require("ts-autotag").rename() then
+		vim.lsp.buf.rename()
+	end
 end)
 ```
 
