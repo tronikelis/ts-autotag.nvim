@@ -60,12 +60,13 @@ local function set_indices_text(bufnr, indices, text)
 end
 
 ---@param bufnr? integer
+---@return boolean success
 function M.rename(bufnr)
 	bufnr = bufnr or vim.api.nvim_get_current_buf()
 
 	local from = get_pair(bufnr)
 	if not from then
-		return
+		return false
 	end
 
 	local from_text = ""
@@ -123,6 +124,8 @@ function M.rename(bufnr)
 
 		set_indices_text(bufnr, b_indices, b_text)
 	end)
+
+	return true
 end
 
 return M
