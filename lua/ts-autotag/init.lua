@@ -20,9 +20,10 @@ local M = {}
 ---@field closing_node_types string[]
 
 ---@param bufnr? integer
+---@param silent? boolean
 ---@return boolean success
-function M.rename(bufnr)
-	return rename_tag.rename(bufnr)
+function M.rename(bufnr, silent)
+	return rename_tag.rename(bufnr, silent)
 end
 
 function M.setup(opts)

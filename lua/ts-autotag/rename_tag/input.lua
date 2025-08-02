@@ -14,11 +14,14 @@ local function has_error(node)
 end
 
 ---@param bufnr integer
+---@param silent boolean
 ---@return TSNode?, TSNode?, boolean?
-local function get_pair(bufnr)
+local function get_pair(bufnr, silent)
 	local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
 	if not ok or not parser then
-		print("TS parser not found")
+		if not silent then
+			print("TS parser not found")
+		end
 		return
 	end
 
@@ -28,7 +31,9 @@ local function get_pair(bufnr)
 	local from, to = ts.get_opening_pair(bufnr)
 	if from and to then
 		if has_error(from) or has_error(to) then
-			print("TS has syntax errors")
+			if not silent then
+				print("TS has syntax errors")
+			end
 			return
 		end
 		return from, to, false
@@ -37,13 +42,17 @@ local function get_pair(bufnr)
 	from, to = ts.get_closing_pair(bufnr)
 	if from and to then
 		if has_error(from) or has_error(to) then
-			print("TS has syntax errors")
+			if not silent then
+				print("TS has syntax errors")
+			end
 			return
 		end
 		return from, to, true
 	end
 
-	print("TS node not found")
+	if not silent then
+		print("TS node not found")
+	end
 end
 
 ---@param bufnr integer
@@ -60,11 +69,15 @@ local function set_indices_text(bufnr, indices, text)
 end
 
 ---@param bufnr? integer
+---@param silent? boolean
 ---@return boolean success
-function M.rename(bufnr)
+function M.rename(bufnr, silent)
 	bufnr = bufnr or vim.api.nvim_get_current_buf()
+	if silent == nil then
+		silent = false
+	end
 
-	local from = get_pair(bufnr)
+	local from = get_pair(bufnr, silent)
 	if not from then
 		return false
 	end
@@ -80,7 +93,7 @@ function M.rename(bufnr)
 			return
 		end
 
-		local a, b, reverse = get_pair(bufnr)
+		local a, b, reverse = get_pair(bufnr, silent)
 		if not a or not b then
 			return
 		end
