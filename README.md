@@ -25,6 +25,9 @@ A minimalist [Neovim](https://neovim.io/) plugin that auto closes & renames html
 
 ### Manual rename tag
 
+> [!NOTE]
+> Keymaps are not set by default, you have to set them yourself like so
+
 ```lua
 vim.keymap.set("n", "<leader>rn", function()
 	require("ts-autotag").rename()
