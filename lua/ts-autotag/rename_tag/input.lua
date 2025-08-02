@@ -42,6 +42,8 @@ local function get_pair(bufnr)
 		end
 		return from, to, true
 	end
+
+	print("TS node not found")
 end
 
 ---@param bufnr integer
