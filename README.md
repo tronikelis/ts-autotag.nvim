@@ -22,9 +22,22 @@ A minimalist [Neovim](https://neovim.io/) plugin that auto closes & renames html
 
 ![auto close tag gif](https://github.com/user-attachments/assets/64654405-3748-4164-ae52-911d96c2637a)
 
+### Manual rename tag
+
+```lua
+vim.keymap.set("n", "<leader>rn", function()
+	require("ts-autotag").rename()
+end)
+```
+
+![manual rename tag gif](https://github.com/user-attachments/assets/0897a3e0-e81d-4be5-8a9c-c8ae98b81b31)
+
 ### Auto rename tag
 
-![auto rename tag](https://github.com/user-attachments/assets/f09eadf1-8440-45e6-b035-084fd97cc7a3)
+> [!WARNING]
+> Feature is VERY experimental and DISABLED BY DEFAULT, uses extmarks to keep track of tags and replaces them, using TS is not enough for multi language support
+
+![auto rename tag gif](https://github.com/user-attachments/assets/ae6f17ab-6108-4805-b86a-ccd047df9ab9)
 
 ## Install
 
@@ -81,13 +94,13 @@ Default config
 		enabled = true,
 	},
 	auto_rename = {
-		enabled = true,
+		enabled = false,
 		closing_node_types = {
 			-- jsx
 			"jsx_closing_element",
 
 			-- xml,
-			"Etag",
+			"ETag",
 
 			-- html
 			"end_tag",
