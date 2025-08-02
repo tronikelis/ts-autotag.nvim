@@ -37,13 +37,13 @@ M.config = {
 		enabled = true,
 	},
 	auto_rename = {
-		enabled = true,
+		enabled = false,
 		closing_node_types = {
 			-- jsx
 			"jsx_closing_element",
 
 			-- xml,
-			"Etag",
+			"ETag",
 
 			-- html
 			"end_tag",

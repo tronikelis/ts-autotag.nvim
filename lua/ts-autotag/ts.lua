@@ -1,4 +1,43 @@
+local config = require("ts-autotag.config")
+
 local M = {}
+
+---@param opts vim.treesitter.get_node.Opts
+---@param types string[]
+---@param depth integer
+---@return TSNode?
+function M.get_node(opts, types, depth)
+	local current = vim.treesitter.get_node(opts)
+	if not current then
+		return
+	end
+
+	return M.find_parent(current, function(n)
+		return vim.list_contains(types, n:type())
+	end, depth)
+end
+
+---@param opts vim.treesitter.get_node.Opts
+---@param depth integer
+---@return TSNode?
+function M.get_opening_node(opts, depth)
+	return M.get_node(opts, config.config.opening_node_types, depth)
+end
+
+---@param opts vim.treesitter.get_node.Opts
+---@param depth integer
+---@return TSNode?
+function M.get_closing_node(opts, depth)
+	return M.get_node(opts, config.config.auto_rename.closing_node_types, depth)
+end
+
+---@param node TSNode?
+---@return TSNode?
+function M.get_node_iden(node)
+	return M.find_first_child(node, function(n)
+		return vim.list_contains(config.config.identifier_node_types, n:type())
+	end)
+end
 
 ---@param node TSNode?
 ---@param predicate fun(node: TSNode): boolean
@@ -41,36 +80,38 @@ function M.find_first_child(node, predicate)
 	end
 end
 
----@param from TSNode
----@param to TSNode
----@param bufnr integer
-function M.copy_buf_contents(from, to, bufnr)
-	local from_text = vim.treesitter.get_node_text(from, bufnr)
-	local to_text = vim.treesitter.get_node_text(to, bufnr)
-	if from_text == to_text then -- bail out early
-		return
-	end
+---@class TsAutotag.NodeIndices
+---@field start_row integer
+---@field start_col integer
+---@field end_row integer
+---@field end_col integer
 
-	local to_range = { to:range(false) }
-
-	local to_indices = {
-		start_row = to_range[1],
-		start_col = to_range[2],
-		end_row = to_range[3],
-		end_col = to_range[4],
+---@param node TSNode
+---@return TsAutotag.NodeIndices
+function M.get_node_indices(node)
+	local range = { node:range(false) }
+	return {
+		start_row = range[1],
+		start_col = range[2],
+		end_row = range[3],
+		end_col = range[4],
 	}
+end
 
-	-- idk if this is even possible
-	if to_indices.start_row ~= to_indices.end_row then
-		print("[ts-autotag.nvim] multi row renames not supported")
+---@param node TSNode
+---@return TSNode?
+function M.first_sibling(node)
+	local parent = node:parent()
+	if not parent then
 		return
 	end
 
-	local l = vim.api.nvim_buf_get_lines(bufnr, to_indices.start_row, to_indices.start_row + 1, true)[1]
+	local child_count = parent:child_count()
+	if child_count == 1 then -- there are no siblings
+		return
+	end
 
-	local renamed = l:sub(1, to_indices.start_col) .. from_text .. l:sub(to_indices.start_col + to:byte_length() + 1)
-
-	vim.api.nvim_buf_set_lines(bufnr, to_indices.start_row, to_indices.end_row + 1, true, { renamed })
+	return parent:child(0)
 end
 
 ---@param node TSNode
@@ -87,6 +128,44 @@ function M.last_sibling(node)
 	end
 
 	return parent:child(child_count - 1)
+end
+
+---@param bufnr integer
+---@return TSNode?, TSNode?
+function M.get_opening_pair(bufnr)
+	local opening_node = M.get_opening_node({ bufnr = bufnr }, 1)
+	if not opening_node then
+		return
+	end
+
+	local sibling = M.last_sibling(opening_node)
+	if not sibling then
+		return
+	end
+	if not vim.list_contains(config.config.auto_rename.closing_node_types, sibling:type()) then
+		return
+	end
+
+	return opening_node, sibling
+end
+
+---@param bufnr integer
+---@return TSNode?, TSNode?
+function M.get_closing_pair(bufnr)
+	local closing_node = M.get_closing_node({ bufnr = bufnr }, 1)
+	if not closing_node then
+		return
+	end
+
+	local sibling = M.first_sibling(closing_node)
+	if not sibling then
+		return
+	end
+	if not vim.list_contains(config.config.opening_node_types, sibling:type()) then
+		return
+	end
+
+	return closing_node, sibling
 end
 
 return M

@@ -1,5 +1,6 @@
-local close_tag = require("ts-autotag.close_tag")
-local rename_tag = require("ts-autotag.rename_tag")
+local auto_close_tag = require("ts-autotag.close_tag")
+local auto_rename_tag = require("ts-autotag.rename_tag.auto")
+local rename_tag = require("ts-autotag.rename_tag.input")
 local config = require("ts-autotag.config")
 
 local M = {}
@@ -18,16 +19,22 @@ local M = {}
 ---@field enabled boolean
 ---@field closing_node_types string[]
 
+---@param bufnr? integer
+---@return boolean success
+function M.rename(bufnr)
+	return rename_tag.rename(bufnr)
+end
+
 function M.setup(opts)
 	opts = opts or {}
 	config.config = vim.tbl_deep_extend("force", config.config, opts)
 
 	if config.config.auto_close.enabled then
-		close_tag.setup()
+		auto_close_tag.setup()
 	end
 
 	if config.config.auto_rename.enabled then
-		rename_tag.setup()
+		auto_rename_tag.setup()
 	end
 end
 
