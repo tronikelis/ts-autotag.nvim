@@ -5,12 +5,12 @@ local M = {}
 
 ---@param bufnr integer
 local function maybe_close_tag(bufnr)
-	local cursor = vim.api.nvim_win_get_cursor(0)
-
 	local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
 	if not ok or not parser then
 		return
 	end
+
+	local cursor = vim.api.nvim_win_get_cursor(0)
 
 	local cursor_row = cursor[1] - 1
 	parser:parse({ cursor_row, cursor_row })
