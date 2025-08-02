@@ -7,7 +7,7 @@
 - [Examples](#examples)
   - [Auto close tag](#auto-close-tag)
   - [Manual rename tag](#manual-rename-tag)
-  - [Auto rename tag](#auto-rename-tag)
+  - [Auto live rename tag](#auto-live-rename-tag)
 - [Install](#install)
 - [Configuration](#configuration)
 - [Differences between nvim-ts-autotag](#differences-between-nvim-ts-autotag)
@@ -33,7 +33,7 @@ end)
 
 ![manual rename tag gif](https://github.com/user-attachments/assets/0897a3e0-e81d-4be5-8a9c-c8ae98b81b31)
 
-### Auto rename tag
+### Auto live rename tag
 
 > [!WARNING]
 > Feature is VERY experimental and DISABLED BY DEFAULT, uses extmarks to keep track of tags and replaces them, using TS is not enough for multi language support.
