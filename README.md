@@ -3,13 +3,14 @@
 </h1>
 
 <!--toc:start-->
-- [Introduction](#-introduction)
-- [Examples](#-examples)
+- [Introduction](#introduction)
+- [Examples](#examples)
   - [Auto close tag](#auto-close-tag)
+  - [Manual rename tag](#manual-rename-tag)
   - [Auto rename tag](#auto-rename-tag)
-- [Install](#-install)
-- [Configuration](#-configuration)
-- [Differences between nvim-ts-autotag](#-differences-between-nvim-ts-autotag)
+- [Install](#install)
+- [Configuration](#configuration)
+- [Differences between nvim-ts-autotag](#differences-between-nvim-ts-autotag)
 <!--toc:end-->
 
 ## Introduction
@@ -36,6 +37,7 @@ end)
 
 > [!WARNING]
 > Feature is VERY experimental and DISABLED BY DEFAULT, uses extmarks to keep track of tags and replaces them, using TS is not enough for multi language support
+> As it doesn't cover all edge-cases I recommend using the manual method, however if you really want live replace you can enable it
 
 ![auto rename tag gif](https://github.com/user-attachments/assets/ae6f17ab-6108-4805-b86a-ccd047df9ab9)
 
