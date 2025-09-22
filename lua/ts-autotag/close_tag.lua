@@ -33,20 +33,30 @@ local function maybe_close_tag(bufnr)
 	vim.api.nvim_win_set_cursor(0, cursor)
 end
 
-function M.setup()
-	vim.on_key(function(_, typed)
-		if typed ~= ">" or vim.api.nvim_get_mode().mode ~= "i" then
+---@param buf integer
+function M.init(buf)
+	local id = vim.on_key(function(_, typed)
+		local current_buf = vim.api.nvim_get_current_buf()
+
+		if current_buf ~= buf or typed ~= ">" or vim.api.nvim_get_mode().mode ~= "i" then
 			return
 		end
 		if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
 			return
 		end
 
-		local buf = vim.api.nvim_get_current_buf()
 		vim.schedule(function()
-			maybe_close_tag(buf)
+			maybe_close_tag(current_buf)
 		end)
 	end)
+
+	vim.api.nvim_create_autocmd("BufDelete", {
+		buffer = buf,
+		once = true,
+		callback = function()
+			vim.on_key(nil, id)
+		end,
+	})
 end
 
 return M

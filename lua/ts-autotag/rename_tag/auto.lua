@@ -1,4 +1,5 @@
 local ts = require("ts-autotag.ts")
+local config = require("ts-autotag.config")
 
 local M = {}
 
@@ -150,21 +151,31 @@ local function sync_pair(bufnr, pair_id_offset)
 	vim.api.nvim_buf_set_text(bufnr, ext2[1], ext2[2], ext2[3].end_row, ext2[3].end_col, { text1 })
 end
 
-function M.setup()
-	vim.api.nvim_set_hl(0, "TsAutotagDebug", {
-		fg = "White",
-		default = true,
-	})
+vim.api.nvim_set_hl(0, "TsAutotagDebug", {
+	default = true,
+})
 
+---@param buf integer
+function M.init(buf)
 	vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+		buffer = buf,
 		callback = function(ev)
+			if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
+				return
+			end
+
 			sync_pair(ev.buf, 1)
 			sync_pair(ev.buf, -1)
 		end,
 	})
 
 	vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI", "BufEnter" }, {
+		buffer = buf,
 		callback = vim.schedule_wrap(function(ev)
+			if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
+				return
+			end
+
 			if not get_cursor_iden_extmark(ev.buf) then
 				update_sibling_extmarks(ev.buf)
 			end
