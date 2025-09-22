@@ -22,5 +22,5 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 
 vim.api.nvim_create_user_command("TsTagRename", function()
-	require("ts-autotag.rename_tag.input").rename(nil, false)
+	require("ts-autotag").rename(nil, false)
 end, {})
