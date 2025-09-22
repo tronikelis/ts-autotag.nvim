@@ -35,27 +35,39 @@ end
 
 ---@param buf integer
 function M.init(buf)
-	local id = vim.on_key(function(_, typed)
-		local current_buf = vim.api.nvim_get_current_buf()
+	local id = vim.api.nvim_create_namespace("")
 
-		if current_buf ~= buf or typed ~= ">" or vim.api.nvim_get_mode().mode ~= "i" then
-			return
-		end
-		if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
-			return
-		end
+	local function cleanup()
+		vim.on_key(nil, id)
+	end
 
-		vim.schedule(function()
-			maybe_close_tag(current_buf)
-		end)
-	end)
+	local function init()
+		cleanup()
+		vim.on_key(function(_, typed)
+			local current_buf = vim.api.nvim_get_current_buf()
 
-	vim.api.nvim_create_autocmd("BufDelete", {
+			if current_buf ~= buf or typed ~= ">" or vim.api.nvim_get_mode().mode ~= "i" then
+				return
+			end
+			if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
+				return
+			end
+
+			vim.schedule(function()
+				maybe_close_tag(current_buf)
+			end)
+		end, id)
+	end
+	init()
+
+	vim.api.nvim_create_autocmd("BufEnter", {
 		buffer = buf,
-		once = true,
-		callback = function()
-			vim.on_key(nil, id)
-		end,
+		callback = init,
+	})
+
+	vim.api.nvim_create_autocmd("BufLeave", {
+		buffer = buf,
+		callback = cleanup,
 	})
 end
 
