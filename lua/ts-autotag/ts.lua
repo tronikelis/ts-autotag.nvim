@@ -133,7 +133,7 @@ end
 ---@param bufnr integer
 ---@return TSNode?, TSNode?
 function M.get_opening_pair(bufnr)
-	local opening_node = M.get_opening_node({ bufnr = bufnr }, 1)
+	local opening_node = M.get_opening_node({ bufnr = bufnr }, 5)
 	if not opening_node then
 		return
 	end
@@ -152,7 +152,7 @@ end
 ---@param bufnr integer
 ---@return TSNode?, TSNode?
 function M.get_closing_pair(bufnr)
-	local closing_node = M.get_closing_node({ bufnr = bufnr }, 1)
+	local closing_node = M.get_closing_node({ bufnr = bufnr }, 5)
 	if not closing_node then
 		return
 	end
@@ -166,6 +166,17 @@ function M.get_closing_pair(bufnr)
 	end
 
 	return closing_node, sibling
+end
+
+---@param node TSNode
+---@return boolean
+function M.has_error(node)
+	local parent = node:parent()
+	if not parent then
+		return node:has_error()
+	end
+
+	return parent:has_error()
 end
 
 return M
