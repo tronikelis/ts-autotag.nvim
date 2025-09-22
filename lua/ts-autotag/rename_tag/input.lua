@@ -2,17 +2,6 @@ local ts = require("ts-autotag.ts")
 
 local M = {}
 
----@param node TSNode
----@return boolean
-local function has_error(node)
-	local parent = node:parent()
-	if not parent then
-		return true
-	end
-
-	return parent:has_error()
-end
-
 ---@param bufnr integer
 ---@param silent boolean
 ---@return TSNode?, TSNode?, boolean?
@@ -30,7 +19,7 @@ local function get_pair(bufnr, silent)
 
 	local from, to = ts.get_opening_pair(bufnr)
 	if from and to then
-		if has_error(from) or has_error(to) then
+		if ts.has_error(from) or ts.has_error(to) then
 			if not silent then
 				print("TS has syntax errors")
 			end
@@ -41,7 +30,7 @@ local function get_pair(bufnr, silent)
 
 	from, to = ts.get_closing_pair(bufnr)
 	if from and to then
-		if has_error(from) or has_error(to) then
+		if ts.has_error(from) or ts.has_error(to) then
 			if not silent then
 				print("TS has syntax errors")
 			end
