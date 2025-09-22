@@ -65,7 +65,7 @@ function M.init(buf)
 		callback = init,
 	})
 
-	vim.api.nvim_create_autocmd("BufLeave", {
+	vim.api.nvim_create_autocmd({ "BufLeave", "BufDelete" }, {
 		buffer = buf,
 		callback = cleanup,
 	})
