@@ -37,28 +37,25 @@ vim.keymap.set("n", "<leader>rn", function()
 end)
 ```
 
+Or you can use a user command `:TsTagRename`
+
 ![manual rename tag gif](https://github.com/user-attachments/assets/0897a3e0-e81d-4be5-8a9c-c8ae98b81b31)
 
 ### Auto live rename tag
 
-> [!WARNING]
-> Feature is VERY experimental and DISABLED BY DEFAULT, uses extmarks to keep track of tags and replaces them, using TS is not enough for multi language support.
-> As it doesn't cover all edge-cases I recommend using the manual method, however if you really want live replace you can enable it.
+> [!NOTE]
+> Feature is not enabled by default, enable with auto_rename.enabled = true
 
 ![auto rename tag gif](https://github.com/user-attachments/assets/ae6f17ab-6108-4805-b86a-ccd047df9ab9)
 
 ## Install
 
-With lazy.nvim
+Install with your favorite plugin manager
 
-```lua
-{
-    "tronikelis/ts-autotag.nvim",
-    opts = {},
-    -- ft = {}, optionally you can load it only in jsx/html
-    event = "VeryLazy",
-}
-```
+Calling `setup()` is optional, only if you want to override default settings,
+for example enabling auto live rename
+
+Plugin is lazy loaded by default
 
 ## Configuration
 
