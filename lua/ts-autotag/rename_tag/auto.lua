@@ -172,6 +172,11 @@ function M.init(buf)
 	vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI", "BufEnter" }, {
 		buffer = buf,
 		callback = vim.schedule_wrap(function(ev)
+			-- race condition fix
+			if vim.api.nvim_get_current_buf() ~= ev.buf then
+				return
+			end
+
 			if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
 				return
 			end
