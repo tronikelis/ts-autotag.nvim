@@ -121,7 +121,12 @@ local function sync_pair(bufnr, pair_id_offset)
 		return
 	end
 
-	local text1 = vim.api.nvim_buf_get_text(bufnr, ext1[2], ext1[3], ext1[4].end_row, ext1[4].end_col, {})[1]
+	local text1 = vim.api.nvim_buf_get_text(bufnr, ext1[2], ext1[3] - 1, ext1[4].end_row, ext1[4].end_col, {})[1]
+	if text1:sub(1, 1) ~= "<" and text1:sub(1, 1) ~= "/" then
+		clear_extmarks(bufnr)
+		return
+	end
+	text1 = text1:sub(2)
 	if text1:find("/") or text1:find("<") or text1:find(">") then
 		clear_extmarks(bufnr)
 		return
@@ -137,7 +142,7 @@ local function sync_pair(bufnr, pair_id_offset)
 			ext1[3],
 			iden_extmark_opts({
 				id = ext1[1],
-				end_col = assert(ext1[4]).end_col - #after,
+				end_col = assert(ext1[4]).end_col - #after - 1,
 				end_row = assert(ext1[4]).end_row,
 			})
 		)
@@ -182,6 +187,7 @@ function M.init(buf)
 			end
 
 			if not get_cursor_iden_extmark(ev.buf) then
+				clear_extmarks(ev.buf)
 				update_sibling_extmarks(ev.buf)
 			end
 		end),
