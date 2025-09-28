@@ -162,7 +162,7 @@ vim.api.nvim_set_hl(0, "TsAutotagDebug", {
 
 ---@param buf integer
 function M.init(buf)
-	local augroup = vim.api.nvim_create_augroup("ts-autotag.nvim/rename_tag_auto_init", {})
+	local augroup = vim.api.nvim_create_augroup(string.format("ts-autotag.nvim/rename_tag_auto_init_%d", buf), {})
 
 	vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
 		group = augroup,

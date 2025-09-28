@@ -35,8 +35,9 @@ end
 
 ---@param buf integer
 function M.init(buf)
-	local id = vim.api.nvim_create_namespace(string.format("ts-autotag.nvim/close_tag_init_%d", buf))
-	local augroup = vim.api.nvim_create_augroup("ts-autotag.nvim/close_tag_init", {})
+	local group_key = string.format("ts-autotag.nvim/close_tag_init_%d", buf)
+	local id = vim.api.nvim_create_namespace(group_key)
+	local augroup = vim.api.nvim_create_augroup(group_key, {})
 
 	local function cleanup()
 		vim.on_key(nil, id)
