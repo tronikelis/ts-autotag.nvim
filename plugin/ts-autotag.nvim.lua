@@ -9,6 +9,12 @@ vim.api.nvim_create_autocmd("FileType", {
 		"templ",
 	},
 	callback = function(ev)
+		local INIT_KEY = "__ts-autotag.nvim_buf_init"
+		if vim.b[ev.buf][INIT_KEY] then
+			return
+		end
+		vim.b[ev.buf][INIT_KEY] = true
+
 		local config = require("ts-autotag.config")
 
 		if config.config.auto_rename.enabled then
