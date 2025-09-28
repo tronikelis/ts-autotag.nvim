@@ -162,7 +162,10 @@ vim.api.nvim_set_hl(0, "TsAutotagDebug", {
 
 ---@param buf integer
 function M.init(buf)
+	local augroup = vim.api.nvim_create_augroup("ts-autotag.nvim/rename_tag_auto_init", {})
+
 	vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+		group = augroup,
 		buffer = buf,
 		callback = function(ev)
 			if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
@@ -175,6 +178,7 @@ function M.init(buf)
 	})
 
 	vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI", "BufEnter" }, {
+		group = augroup,
 		buffer = buf,
 		callback = vim.schedule_wrap(function(ev)
 			-- race condition fix
