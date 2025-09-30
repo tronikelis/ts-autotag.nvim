@@ -22,10 +22,14 @@ end
 
 ---@param bufnr integer
 local function update_sibling_extmarks(bufnr)
-	local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
+	local aliased_lang = ts.get_aliased_lang(bufnr)
+	local ok, parser = pcall(vim.treesitter.get_parser, bufnr, aliased_lang)
 	if not ok or not parser then
 		return
 	end
+
+	-- Force parse to ensure tree is up to date
+	parser:parse()
 
 	local opening_node, closing_node = ts.get_opening_pair(bufnr)
 	if not opening_node or not closing_node then

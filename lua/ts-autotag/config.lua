@@ -2,6 +2,12 @@ local M = {}
 
 ---@type TsAutotag.Config
 M.config = {
+	aliases = {
+    razor = "html",
+    cshtml = "html",
+    htmlangular = "html",
+  },
+
 	opening_node_types = {
 		-- templ
 		"tag_start",

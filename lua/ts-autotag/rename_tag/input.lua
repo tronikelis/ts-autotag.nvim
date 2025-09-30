@@ -6,7 +6,8 @@ local M = {}
 ---@param silent boolean
 ---@return TSNode?, TSNode?, boolean?
 local function get_pair(bufnr, silent)
-	local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
+	local aliased_lang = ts.get_aliased_lang(bufnr)
+	local ok, parser = pcall(vim.treesitter.get_parser, bufnr, aliased_lang)
 	if not ok or not parser then
 		if not silent then
 			print("TS parser not found")

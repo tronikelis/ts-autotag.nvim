@@ -2,11 +2,28 @@ local config = require("ts-autotag.config")
 
 local M = {}
 
+---@param bufnr integer
+---@return string
+function M.get_aliased_lang(bufnr)
+	local filetype = vim.api.nvim_get_option_value("filetype", { buf = bufnr })
+	return config.config.aliases[filetype] or filetype
+end
+
 ---@param opts vim.treesitter.get_node.Opts
 ---@param types string[]
 ---@param depth integer
 ---@return TSNode?
 function M.get_node(opts, types, depth)
+  -- Get aliased language if any
+  local aliased_lang = M.get_aliased_lang(opts.bufnr)
+  opts = vim.tbl_extend("force", opts, { lang = aliased_lang })
+
+  -- If no pos is provided, use current cursor position
+  if not opts.pos then
+    local cursor = vim.api.nvim_win_get_cursor(0)
+    opts.pos = { cursor[1] - 1, cursor[2] }
+  end
+
 	local current = vim.treesitter.get_node(opts)
 	if not current then
 		return
