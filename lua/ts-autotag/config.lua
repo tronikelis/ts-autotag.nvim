@@ -31,6 +31,16 @@ M.config = {
 		"element_identifier",
 	},
 
+	filetypes = {
+		"typescript",
+		"javascript",
+		"typescriptreact",
+		"javascriptreact",
+		"xml",
+		"html",
+		"templ",
+	},
+
 	disable_in_macro = true,
 
 	auto_close = {

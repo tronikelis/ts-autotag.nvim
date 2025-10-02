@@ -9,6 +9,7 @@ local M = {}
 ---@field identifier_node_types string[]
 ---@field auto_rename TsAutotag.Config.AutoRename
 ---@field auto_close TsAutotag.Config.AutoClose?
+---@field filetypes string[]
 
 ---@class TsAutotag.Config.AutoRename
 ---@field enabled boolean

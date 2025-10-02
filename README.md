@@ -95,6 +95,17 @@ Default config
 
 	disable_in_macro = true,
 
+	-- plugin will be initialized on these filetypes
+	filetypes = {
+		"typescript",
+		"javascript",
+		"typescriptreact",
+		"javascriptreact",
+		"xml",
+		"html",
+		"templ",
+	},
+
 	auto_close = {
 		enabled = true,
 	},

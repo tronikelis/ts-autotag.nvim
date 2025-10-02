@@ -1,13 +1,8 @@
+local augroup = vim.api.nvim_create_augroup("ts-autotag.nvim/init_buffer", {})
+
 vim.api.nvim_create_autocmd("FileType", {
-	pattern = {
-		"typescript",
-		"javascript",
-		"typescriptreact",
-		"javascriptreact",
-		"xml",
-		"html",
-		"templ",
-	},
+	group = augroup,
+	pattern = require("ts-autotag.config").config.filetypes,
 	callback = function(ev)
 		local config = require("ts-autotag.config")
 
