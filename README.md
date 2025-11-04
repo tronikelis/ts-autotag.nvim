@@ -104,6 +104,7 @@ Default config
 		"xml",
 		"html",
 		"templ",
+		"php",
 	},
 
 	auto_close = {

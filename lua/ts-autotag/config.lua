@@ -39,6 +39,7 @@ M.config = {
         "xml",
         "html",
         "templ",
+        "php",
     },
 
     disable_in_macro = true,
