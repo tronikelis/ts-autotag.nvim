@@ -2,67 +2,67 @@ local M = {}
 
 ---@type TsAutotag.Config
 M.config = {
-	opening_node_types = {
-		-- templ
-		"tag_start",
+    opening_node_types = {
+        -- templ
+        "tag_start",
 
-		-- xml,
-		"STag",
+        -- xml,
+        "STag",
 
-		-- html
-		"start_tag",
+        -- html
+        "start_tag",
 
-		-- jsx
-		"jsx_opening_element",
-	},
-	identifier_node_types = {
-		-- html
-		"tag_name",
-		"erroneous_end_tag_name",
+        -- jsx
+        "jsx_opening_element",
+    },
+    identifier_node_types = {
+        -- html
+        "tag_name",
+        "erroneous_end_tag_name",
 
-		-- xml,
-		"Name",
+        -- xml,
+        "Name",
 
-		-- jsx
-		"member_expression",
-		"identifier",
+        -- jsx
+        "member_expression",
+        "identifier",
 
-		-- templ
-		"element_identifier",
-	},
+        -- templ
+        "element_identifier",
+    },
 
-	filetypes = {
-		"typescript",
-		"javascript",
-		"typescriptreact",
-		"javascriptreact",
-		"xml",
-		"html",
-		"templ",
-	},
+    filetypes = {
+        "typescript",
+        "javascript",
+        "typescriptreact",
+        "javascriptreact",
+        "xml",
+        "html",
+        "templ",
+    },
 
-	disable_in_macro = true,
+    disable_in_macro = true,
 
-	auto_close = {
-		enabled = true,
-	},
-	auto_rename = {
-		enabled = false,
-		closing_node_types = {
-			-- jsx
-			"jsx_closing_element",
+    auto_close = {
+        enabled = true,
+    },
+    auto_rename = {
+        enabled = false,
+        closing_node_types = {
+            -- jsx
+            "jsx_closing_element",
 
-			-- xml,
-			"ETag",
+            -- xml,
+            "ETag",
 
-			-- html
-			"end_tag",
-			"erroneous_end_tag",
+            -- html
+            "end_tag",
+            "erroneous_end_tag",
 
-			-- templ
-			"tag_end",
-		},
-	},
+            -- templ
+            "tag_end",
+        },
+    },
 }
 
 return M

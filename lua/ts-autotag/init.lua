@@ -19,13 +19,13 @@ local M = {}
 ---@param silent? boolean
 ---@return boolean success
 function M.rename(bufnr, silent)
-	return require("ts-autotag.rename_tag.input").rename(bufnr, silent)
+    return require("ts-autotag.rename_tag.input").rename(bufnr, silent)
 end
 
 function M.setup(opts)
-	opts = opts or {}
-	local config = require("ts-autotag.config")
-	config.config = vim.tbl_deep_extend("force", config.config, opts)
+    opts = opts or {}
+    local config = require("ts-autotag.config")
+    config.config = vim.tbl_deep_extend("force", config.config, opts)
 end
 
 return M
