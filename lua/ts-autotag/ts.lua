@@ -21,6 +21,7 @@ end
 ---@param depth integer
 ---@return TSNode?
 function M.get_opening_node(opts, depth)
+    opts = vim.tbl_extend("force", { ignore_injections = false }, opts)
     return M.get_node(opts, config.config.opening_node_types, depth)
 end
 
