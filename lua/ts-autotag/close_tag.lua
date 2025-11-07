@@ -33,46 +33,27 @@ local function maybe_close_tag(bufnr)
     vim.api.nvim_win_set_cursor(0, cursor)
 end
 
+vim.on_key(function(_, typed)
+    local buf = vim.api.nvim_get_current_buf()
+    if not vim.b[buf].__autotag_close_tag_enabled then
+        return
+    end
+
+    if typed ~= ">" or vim.api.nvim_get_mode().mode ~= "i" then
+        return
+    end
+    if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
+        return
+    end
+
+    vim.schedule(function()
+        maybe_close_tag(buf)
+    end)
+end, vim.api.nvim_create_namespace("ts-autotag.nvim/close_tag_init"))
+
 ---@param buf integer
 function M.init(buf)
-    local group_key = string.format("ts-autotag.nvim/close_tag_init_%d", buf)
-    local id = vim.api.nvim_create_namespace(group_key)
-    local augroup = vim.api.nvim_create_augroup(group_key, {})
-
-    local function cleanup()
-        vim.on_key(nil, id)
-    end
-
-    local function init()
-        cleanup()
-        vim.on_key(function(_, typed)
-            local current_buf = vim.api.nvim_get_current_buf()
-
-            if current_buf ~= buf or typed ~= ">" or vim.api.nvim_get_mode().mode ~= "i" then
-                return
-            end
-            if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
-                return
-            end
-
-            vim.schedule(function()
-                maybe_close_tag(current_buf)
-            end)
-        end, id)
-    end
-    init()
-
-    vim.api.nvim_create_autocmd("BufEnter", {
-        group = augroup,
-        buffer = buf,
-        callback = init,
-    })
-
-    vim.api.nvim_create_autocmd({ "BufLeave", "BufDelete" }, {
-        group = augroup,
-        buffer = buf,
-        callback = cleanup,
-    })
+    vim.b[buf].__autotag_close_tag_enabled = true
 end
 
 return M
