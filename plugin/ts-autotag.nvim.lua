@@ -4,6 +4,11 @@ vim.api.nvim_create_autocmd("FileType", {
     group = augroup,
     callback = function(event)
         local config = require("ts-autotag.config").config
+
+        if not config.should_attach(event.buf) then
+            return
+        end
+
         if vim.tbl_contains(config.filetypes, event.match) then
             if config.auto_rename.enabled then
                 require("ts-autotag.rename_tag.auto").init(event.buf)

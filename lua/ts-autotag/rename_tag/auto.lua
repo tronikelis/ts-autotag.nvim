@@ -121,7 +121,13 @@ local function sync_pair(bufnr, pair_id_offset)
         return
     end
 
-    local text1 = vim.api.nvim_buf_get_text(bufnr, ext1[2], ext1[3] - 1, ext1[4].end_row, ext1[4].end_col, {})[1]
+    -- For deleting, "vim.api.nvim_buf_get_text" may give "Index out of bounds"
+    local ok, text = pcall(vim.api.nvim_buf_get_text, bufnr, ext1[2], ext1[3] - 1, ext1[4].end_row, ext1[4].end_col, {})
+    if not ok then
+        clear_extmarks(bufnr)
+        return
+    end
+    local text1 = text[1]
     if text1:sub(1, 1) ~= "<" and text1:sub(1, 1) ~= "/" then
         clear_extmarks(bufnr)
         return
@@ -168,7 +174,7 @@ function M.init(buf)
         group = augroup,
         buffer = buf,
         callback = function(ev)
-            if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
+            if config.is_disabled_executing_macro() then
                 return
             end
 
@@ -186,7 +192,7 @@ function M.init(buf)
                 return
             end
 
-            if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
+            if config.is_disabled_executing_macro() then
                 return
             end
 
