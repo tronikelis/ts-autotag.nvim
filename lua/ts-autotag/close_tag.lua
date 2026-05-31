@@ -1,5 +1,5 @@
 local ts = require("ts-autotag.ts")
-local u = require('ts-autotag.utils')
+local u = require("ts-autotag.utils")
 
 local M = {}
 
