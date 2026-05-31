@@ -175,7 +175,7 @@ function M.init(buf)
         group = augroup,
         buffer = buf,
         callback = function(ev)
-            if u.disabled() then
+            if u.disabled(ev.buf) then
                 return
             end
 
@@ -188,12 +188,12 @@ function M.init(buf)
         group = augroup,
         buffer = buf,
         callback = vim.schedule_wrap(function(ev)
-            -- race condition fix
-            if vim.api.nvim_get_current_buf() ~= ev.buf then
+            if u.disabled(ev.buf) then
                 return
             end
 
-            if u.disabled() then
+            -- race condition fix
+            if vim.api.nvim_get_current_buf() ~= ev.buf then
                 return
             end
 

@@ -64,6 +64,7 @@ M.config = {
             "tag_end",
         },
     },
+    should_attach = function(_) return true end
 }
 
 return M
