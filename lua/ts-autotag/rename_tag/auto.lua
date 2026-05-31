@@ -1,5 +1,6 @@
 local ts = require("ts-autotag.ts")
 local config = require("ts-autotag.config")
+local u = require("ts-autotag.utils")
 
 local M = {}
 
@@ -174,7 +175,7 @@ function M.init(buf)
         group = augroup,
         buffer = buf,
         callback = function(ev)
-            if config.config.disable_in_macro and (vim.fn.reg_recording() ~= "" or vim.fn.reg_executing() ~= "") then
+            if u.disabled() then
                 return
             end
 
@@ -192,7 +193,7 @@ function M.init(buf)
                 return
             end
 
-            if config.config.disable_in_macro and vim.fn.reg_recording() ~= "" then
+            if u.disabled() then
                 return
             end
 
