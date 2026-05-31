@@ -1,5 +1,5 @@
 local ts = require("ts-autotag.ts")
-local u = require("ts-autotag.utils")
+local config = require("ts-autotag.config")
 
 local M = {}
 
@@ -35,14 +35,14 @@ end
 
 vim.on_key(function(_, typed)
     local buf = vim.api.nvim_get_current_buf()
-    if u.disabled(buf) then
-        return
-    end
     if not vim.b[buf].__autotag_close_tag_enabled then
         return
     end
 
     if typed ~= ">" or vim.api.nvim_get_mode().mode ~= "i" then
+        return
+    end
+    if config.is_disabled_executing_macro() then
         return
     end
 

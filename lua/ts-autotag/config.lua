@@ -1,5 +1,10 @@
 local M = {}
 
+---@return boolean
+function M.is_disabled_executing_macro()
+    return M.config.disable_in_macro and (vim.fn.reg_recording() ~= "" or vim.fn.reg_executing() ~= "")
+end
+
 ---@type TsAutotag.Config
 M.config = {
     opening_node_types = {
@@ -64,7 +69,10 @@ M.config = {
             "tag_end",
         },
     },
-    should_attach = function(_) return true end
+
+    should_attach = function()
+        return true
+    end,
 }
 
 return M

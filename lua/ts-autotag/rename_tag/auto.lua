@@ -1,6 +1,5 @@
 local ts = require("ts-autotag.ts")
 local config = require("ts-autotag.config")
-local u = require("ts-autotag.utils")
 
 local M = {}
 
@@ -175,7 +174,7 @@ function M.init(buf)
         group = augroup,
         buffer = buf,
         callback = function(ev)
-            if u.disabled(ev.buf) then
+            if config.is_disabled_executing_macro() then
                 return
             end
 
@@ -188,12 +187,12 @@ function M.init(buf)
         group = augroup,
         buffer = buf,
         callback = vim.schedule_wrap(function(ev)
-            if u.disabled(ev.buf) then
+            -- race condition fix
+            if vim.api.nvim_get_current_buf() ~= ev.buf then
                 return
             end
 
-            -- race condition fix
-            if vim.api.nvim_get_current_buf() ~= ev.buf then
+            if config.is_disabled_executing_macro() then
                 return
             end
 

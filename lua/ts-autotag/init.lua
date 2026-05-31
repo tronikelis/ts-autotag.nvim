@@ -10,7 +10,7 @@ local M = {}
 ---@field auto_rename TsAutotag.Config.AutoRename
 ---@field auto_close TsAutotag.Config.AutoClose?
 ---@field filetypes string[]
----@field should_attach function(buf:integer) boolean
+---@field should_attach fun(buf: integer): boolean
 
 ---@class TsAutotag.Config.AutoRename
 ---@field enabled boolean

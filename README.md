@@ -127,8 +127,7 @@ Default config
 			"tag_end",
 		},
 	},
-	-- Return false to disable this plugin for a buffer,
-	-- which is useful for large buffers.
+	-- disable plugin on some buffers
 	should_attach = function(buf) return true end
 }
 ```
