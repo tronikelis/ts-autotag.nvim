@@ -17,6 +17,10 @@
 
 A minimalist [Neovim](https://neovim.io/) plugin that auto closes & renames html/jsx elements without setting keymaps
 
+> [!CAUTION]
+> Do not lazy load this plugin, it breaks correct initialization order meaning it may not work at all.
+> Plugin is already lazy loaded by default. More info :h lua-plugin-lazy
+
 ## Examples
 
 ### Auto close tag
