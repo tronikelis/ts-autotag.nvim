@@ -2,9 +2,20 @@ local ts = require("ts-autotag.ts")
 
 local M = {}
 
+---@param silent boolean?
+local function create_logger(silent)
+    ---@param msg string
+    return function(msg)
+        if not silent then
+            vim.notify(msg)
+        end
+    end
+end
+
 ---@param bufnr integer
+---@param logger function
 ---@return TSNode?, TSNode?, boolean?
-local function get_pair(bufnr)
+local function get_pair(bufnr, logger)
     local parser = ts.get_parser(bufnr)
     if not parser then
         return
@@ -16,7 +27,7 @@ local function get_pair(bufnr)
     local from, to = ts.get_opening_pair(bufnr)
     if from and to then
         if ts.has_error(from) or ts.has_error(to) then
-            vim.notify("TS has syntax errors")
+            logger("TS has syntax errors")
             return
         end
         return from, to, false
@@ -25,13 +36,13 @@ local function get_pair(bufnr)
     from, to = ts.get_closing_pair(bufnr)
     if from and to then
         if ts.has_error(from) or ts.has_error(to) then
-            vim.notify("TS has syntax errors")
+            logger("TS has syntax errors")
             return
         end
         return from, to, true
     end
 
-    vim.notify("TS node not found")
+    logger("TS node not found")
 end
 
 ---@param bufnr integer
@@ -48,11 +59,12 @@ local function set_indices_text(bufnr, indices, text)
 end
 
 ---@param bufnr? integer
+---@param silent? boolean
 ---@return boolean success
-function M.rename(bufnr)
+function M.rename(bufnr, silent)
     bufnr = bufnr or vim.api.nvim_get_current_buf()
 
-    local from = get_pair(bufnr)
+    local from = get_pair(bufnr, create_logger(silent))
     if not from then
         return false
     end
@@ -68,7 +80,7 @@ function M.rename(bufnr)
             return
         end
 
-        local a, b, reverse = get_pair(bufnr)
+        local a, b, reverse = get_pair(bufnr, create_logger(silent))
         if not a or not b then
             return
         end
