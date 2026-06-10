@@ -21,6 +21,9 @@ A minimalist [Neovim](https://neovim.io/) plugin that auto closes & renames html
 > Do not lazy load this plugin, it breaks correct initialization order meaning it may not work at all.
 > Plugin is already lazy loaded by default. More info :h lua-plugin-lazy
 
+> [!TIP]
+> After plugin install run :checkhealth ts-autotag to check if parsers are installed correctly
+
 ## Examples
 
 ### Auto close tag
