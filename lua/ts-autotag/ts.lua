@@ -2,6 +2,15 @@ local config = require("ts-autotag.config")
 
 local M = {}
 
+---@param bufnr integer
+function M.get_parser(bufnr)
+    local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
+    if not ok or not parser then
+        return
+    end
+    return parser
+end
+
 ---@param opts vim.treesitter.get_node.Opts
 ---@param types string[]
 ---@param depth integer

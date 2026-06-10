@@ -22,8 +22,8 @@ end
 
 ---@param bufnr integer
 local function update_sibling_extmarks(bufnr)
-    local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
-    if not ok or not parser then
+    local parser = ts.get_parser(bufnr)
+    if not parser then
         return
     end
 

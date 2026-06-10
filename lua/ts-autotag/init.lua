@@ -17,10 +17,9 @@ local M = {}
 ---@field closing_node_types string[]
 
 ---@param bufnr? integer
----@param silent? boolean
 ---@return boolean success
-function M.rename(bufnr, silent)
-    return require("ts-autotag.rename_tag.input").rename(bufnr, silent)
+function M.rename(bufnr)
+    return require("ts-autotag.rename_tag.input").rename(bufnr)
 end
 
 function M.setup(opts)

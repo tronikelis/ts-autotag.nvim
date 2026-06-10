@@ -3,14 +3,10 @@ local ts = require("ts-autotag.ts")
 local M = {}
 
 ---@param bufnr integer
----@param silent boolean
 ---@return TSNode?, TSNode?, boolean?
-local function get_pair(bufnr, silent)
-    local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
-    if not ok or not parser then
-        if not silent then
-            print("TS parser not found")
-        end
+local function get_pair(bufnr)
+    local parser = ts.get_parser(bufnr)
+    if not parser then
         return
     end
 
@@ -20,9 +16,7 @@ local function get_pair(bufnr, silent)
     local from, to = ts.get_opening_pair(bufnr)
     if from and to then
         if ts.has_error(from) or ts.has_error(to) then
-            if not silent then
-                print("TS has syntax errors")
-            end
+            vim.notify("TS has syntax errors")
             return
         end
         return from, to, false
@@ -31,17 +25,13 @@ local function get_pair(bufnr, silent)
     from, to = ts.get_closing_pair(bufnr)
     if from and to then
         if ts.has_error(from) or ts.has_error(to) then
-            if not silent then
-                print("TS has syntax errors")
-            end
+            vim.notify("TS has syntax errors")
             return
         end
         return from, to, true
     end
 
-    if not silent then
-        print("TS node not found")
-    end
+    vim.notify("TS node not found")
 end
 
 ---@param bufnr integer
@@ -58,15 +48,11 @@ local function set_indices_text(bufnr, indices, text)
 end
 
 ---@param bufnr? integer
----@param silent? boolean
 ---@return boolean success
-function M.rename(bufnr, silent)
+function M.rename(bufnr)
     bufnr = bufnr or vim.api.nvim_get_current_buf()
-    if silent == nil then
-        silent = false
-    end
 
-    local from = get_pair(bufnr, silent)
+    local from = get_pair(bufnr)
     if not from then
         return false
     end
@@ -82,7 +68,7 @@ function M.rename(bufnr, silent)
             return
         end
 
-        local a, b, reverse = get_pair(bufnr, silent)
+        local a, b, reverse = get_pair(bufnr)
         if not a or not b then
             return
         end

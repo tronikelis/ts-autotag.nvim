@@ -5,8 +5,8 @@ local M = {}
 
 ---@param bufnr integer
 local function maybe_close_tag(bufnr)
-    local ok, parser = pcall(vim.treesitter.get_parser, bufnr)
-    if not ok or not parser then
+    local parser = ts.get_parser(bufnr)
+    if not parser then
         return
     end
 
