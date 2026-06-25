@@ -23,6 +23,7 @@ function M.rename(bufnr, silent)
     return require("ts-autotag.rename_tag.input").rename(bufnr, silent)
 end
 
+---@param opts table?
 function M.setup(opts)
     opts = opts or {}
     local config = require("ts-autotag.config")
